@@ -1,5 +1,6 @@
 {
   "name": "manage-my-debt-v2",
+  "description": "A simple debt management application built with Nuxt.js and Supabase.",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
