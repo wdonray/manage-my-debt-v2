@@ -1,75 +1,20 @@
-# Nuxt Minimal Starter
+# Manage My Debt
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A simple debt management application built with Nuxt.js and Supabase.
 
-## Setup
+## Tech Stack
 
-Make sure to install dependencies:
+This project utilizes the following technologies and services:
 
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- **Frontend Framework:** [Nuxt.js](https://nuxt.com/) (v3)
+- **UI Component Library:** Genesis UI (Custom UI library)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Backend as a Service (BaaS):** [Supabase](https://supabase.com/)
+  - Authentication
+  - PostgreSQL Database
+  - REST API
+- **Hosting:** [AWS Amplify](https://aws.amazon.com/amplify/)
+- **DNS Management:** [AWS Route 53](https://aws.amazon.com/route53/)
+- **Transactional Email:** [Brevo](https://www.brevo.com/) (formerly Sendinblue)
+- **CAPTCHA Service:** [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/)
+- **[Other Tools/Libraries]:** (Add any other notable libraries like state management, utility libraries, etc.)

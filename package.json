@@ -1,7 +1,7 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "manage-my-debt-v2",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -11,16 +11,30 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "stylelint": "stylelint 'src/**/*.{css,vue}'",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "dependencies": {
+    "@christfirst/genesis": "^0.26.24",
+    "@nuxt/scripts": "^0.11.5",
     "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/robots": "^5.2.8",
+    "@nuxtjs/sitemap": "^7.2.9",
+    "@nuxtjs/supabase": "^1.5.0",
+    "@nuxtjs/turnstile": "^1.0.0",
+    "@unhead/vue": "^2.0.5",
+    "motion-v": "^1.0.0-beta.1",
     "nuxt": "^3.16.2",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@christfirst/doctrine": "^0.2.6",
-    "@nuxt/icon": "^1.11.0"
+    "@nuxt/icon": "^1.11.0",
+    "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "cookie": "1.0.2",
+    "@supabase/auth-js": "2.66.1"
   }
 }
