@@ -7,16 +7,15 @@ export default function useDebts() {
   const loading = ref(false)
   const error = ref<any>(null)
 
-  const userId = computed(() => user.value?.id)
-
   async function fetchDebts() {
-    if (!userId.value) return
+    if (!user.value?.id) return
+
     loading.value = true
     error.value = null
+
     try {
-      const { data: fetchedData, error: fetchError } = await useFetch(`/api/get/debts/user/${userId.value}`)
-      if (fetchError.value) throw fetchError.value
-      debts.value = (fetchedData.value as Debt[]) || []
+      const data = await $fetch(`/api/get/debts/user/${user.value.id}`)
+      debts.value = data as Debt[]
     } catch (err) {
       error.value = err
     } finally {
@@ -25,19 +24,18 @@ export default function useDebts() {
   }
 
   async function addDebt(debtPayload: DebtCreatePayload) {
-    if (!userId.value) throw new Error('User not authenticated')
+    if (!user.value?.id) return
+
     loading.value = true
     error.value = null
+
     try {
-      const payload = { ...debtPayload, user_id: userId.value }
-      const { error: insertError } = await useFetch('/api/post/debts', {
+      await $fetch('/api/post/debts', {
         method: 'POST',
-        body: payload,
+        body: { ...debtPayload, user_id: user.value.id },
       })
-      if (insertError.value) throw insertError.value
       fetchDebts()
     } catch (err) {
-      console.error('Error adding debt:', err)
       error.value = err
       throw err
     } finally {
@@ -48,15 +46,11 @@ export default function useDebts() {
   async function updateDebt(debtId: number, debtPayload: DebtUpdatePayload) {
     loading.value = true
     error.value = null
+
     try {
-      const { error: updateError } = await useFetch(`/api/patch/debts/${debtId}`, {
-        method: 'PATCH',
-        body: debtPayload,
-      })
-      if (updateError.value) throw updateError.value
+      await $fetch(`/api/patch/debts/${debtId}`, { method: 'PATCH', body: debtPayload })
       fetchDebts()
     } catch (err) {
-      console.error('Error updating debt:', err)
       error.value = err
       throw err
     } finally {
@@ -69,11 +63,9 @@ export default function useDebts() {
     loading.value = true
     error.value = null
     try {
-      const { error: deleteError } = await useFetch(`/api/delete/debts/${debtId}`, { method: 'DELETE' })
-      if (deleteError.value) throw deleteError.value
+      await $fetch(`/api/delete/debts/${debtId}`, { method: 'DELETE' })
       fetchDebts()
     } catch (err) {
-      console.error('Error deleting debt:', err)
       error.value = err
       throw err
     } finally {

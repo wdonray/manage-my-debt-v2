@@ -103,7 +103,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import useDebts from '~/composables/useDebts'
-import type { Debt, DebtCreatePayload, DebtUpdatePayload } from '~/types/database'
+import type { Debt, DebtCreatePayload } from '~/types/database'
 
 const { user, signOut } = useAuth()
 const { debts, loading, error, addDebt, updateDebt, removeDebt } = useDebts()
@@ -123,14 +123,7 @@ const columns = [
 ]
 
 function emptyFormData(): DebtCreatePayload {
-  return {
-    name: '',
-    balance: 0,
-    apr: 0,
-    min_payment: 0,
-    extra_payment: 0,
-    due_date: null,
-  }
+  return { balance: 0, apr: 0, min_payment: 0 }
 }
 
 function resetForm() {

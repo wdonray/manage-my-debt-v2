@@ -1,162 +1,151 @@
 <template>
-  <div class="login-container">
-    <Card border class="login-card" disable-fetching>
-      <Flex stack v-auto-animate>
-        <template v-if="!oneTimeCodeRequired">
-          <Button class="btn-outline btn-block" @click="() => signInWithOauth('google')" :disabled="signingIn">
-            <Flex gap="sm" align="center">
-              <Icon name="mdi:google" size="20px" />
-              Google
-            </Flex>
-          </Button>
+  <Flex stack gap="2xl" class="login-container">
+    <div class="logo-wrapper" v-if="mobile">
+      <motion.img
+        :src="colorMode.preference === 'light' ? '/webp/logo-light.webp' : '/webp/logo-dark.webp'"
+        alt="logo"
+        class="logo"
+        :initial="{ opacity: 0, scale: 0.5 }"
+        :animate="{
+          opacity: 1,
+          scale: 1,
+          transition: {
+            type: 'spring',
+            stiffness: 100,
+            damping: 10,
+          },
+        }"
+      />
+    </div>
 
-          <Button class="btn-outline btn-block" @click="() => signInWithOauth('facebook')" :disabled="signingIn">
-            <Flex gap="sm" align="center">
-              <Icon name="mdi:facebook" size="20px" />
-              Facebook
-            </Flex>
-          </Button>
+    <div>
+      <h1>Get Started!</h1>
+      <small class="text-secondary">Log in to manage your debts and achieve financial freedom</small>
+    </div>
 
-          <hr />
-        </template>
+    <Flex stack gap="xl" v-auto-animate>
+      <Notice v-if="loginError" type="error" role="alert" aria-live="polite">
+        {{ formatCapitalize(loginError) || 'An error occurred' }}
+      </Notice>
 
-        <Notice v-if="loginError" type="error" role="alert" aria-live="polite">
-          {{ formatCapitalize(loginError) || 'An error occurred' }}
-        </Notice>
+      <FormWithValidation
+        @submit="() => signInWithOtp(formData.email, formData.captchaToken)"
+        @input="loginError = ''"
+        aria-label="Login form"
+      >
+        <FieldText
+          v-model="formData.email"
+          id="email"
+          placeholder="Email"
+          name="email"
+          validations="required|email"
+          autocomplete="email"
+          aria-required="true"
+        />
 
-        <FormWithValidation
-          v-if="!oneTimeCodeRequired"
-          @submit="() => signInWithOtp(formData.email, formData.captchaToken)"
-          @input="loginError = ''"
-          aria-label="Login form"
-        >
-          <FieldText
-            v-model="formData.email"
-            label="Email"
-            id="email"
-            name="email"
-            validations="required|email"
-            autocomplete="email"
-            aria-required="true"
-          />
-
-          <Flex stack gap="xl">
+        <Flex stack gap="xl">
+          <Transition name="fade" mode="out-in">
             <NuxtTurnstile
+              v-if="formData.email"
               v-model="formData.captchaToken"
-              :options="{ theme: colorMode.preference, action: 'vue' }"
               aria-label="CAPTCHA verification"
               style="align-self: center"
             />
+          </Transition>
+          <Button class="btn-primary btn-block" type="submit" :disabled="signingIn">
+            {{ signingIn ? 'Logging in...' : 'Login' }}
+          </Button>
+        </Flex>
+      </FormWithValidation>
 
-            <Button class="btn-primary btn-block" type="submit" aria-busy="signingIn" :disabled="signingIn">
-              Login
-            </Button>
+      <span class="text-secondary or-text">Or continue with</span>
+
+      <div class="btn-group">
+        <Button class="btn-outline btn-block" @click="() => signInWithOauth('google')">
+          <Flex gap="sm" align="center">
+            <img src="/svg/google.svg" alt="Google" :width="iconSize" :height="iconSize" />
+            Google
           </Flex>
-        </FormWithValidation>
+        </Button>
 
-        <FormWithValidation
-          v-else
-          @submit="() => verifyOneTimeCode(formData.email, formData.token)"
-          @input="loginError = ''"
-          aria-label="Verify one-time code form"
-        >
-          <Flex stack gap="sm" style="margin-bottom: var(--spacing-lg)">
-            <span>
-              We've sent a login link and one-time code to
-              <strong>{{ formData.email }}</strong>
-            </span>
-            <small class="text-secondary">
-              You can either click the magic link in your email or enter the one-time code below. If you don't see the
-              email, check your spam folder.
-            </small>
+        <Button class="btn-outline btn-block" @click="() => signInWithOauth('facebook')">
+          <Flex gap="sm" align="center">
+            <img src="/svg/facebook.svg" alt="Facebook" :width="iconSize" :height="iconSize" />
+            Facebook
           </Flex>
-
-          <FieldText
-            v-model="formData.token"
-            label="One-time code"
-            id="token"
-            name="token"
-            validations="required"
-            placeholder="Enter the 6-digit code"
-            autocomplete="one-time-code"
-          />
-
-          <Flex stack gap="xl">
-            <div>
-              <Button
-                class="btn-text"
-                style="font-size: var(--text-xsmall)"
-                @click="resendCode"
-                :disabled="resendCodeTimer > 0"
-              >
-                Didn't receive the code? Click to resend
-                <span v-if="resendCodeTimer > 0">({{ resendCodeTimer }}s)</span>
-              </Button>
-            </div>
-
-            <Flex gap="md" style="justify-content: end">
-              <Button class="btn-outline" type="button" @click="oneTimeCodeRequired = false" :disabled="signingIn">
-                Back
-              </Button>
-              <Button class="btn-primary" type="submit" aria-busy="signingIn" :disabled="signingIn">Verify Code</Button>
-            </Flex>
-          </Flex>
-        </FormWithValidation>
-      </Flex>
-    </Card>
-  </div>
+        </Button>
+      </div>
+    </Flex>
+  </Flex>
 </template>
 
 <script setup lang="ts">
 import { motion } from 'motion-v'
 
+definePageMeta({
+  layout: 'authenticate',
+})
+
 const colorMode = useColorMode()
+const { mobile } = useBreakpoint()
 
-const formData = ref({
-  email: '',
-  captchaToken: '',
-  token: '', // one-time code
-})
+const iconSize = 30
 
-const resendCodeTimer = ref(60)
+const formData = ref({ email: '', captchaToken: '' })
 
-const { user, loginError, signingIn, signInWithOtp, signInWithOauth, oneTimeCodeRequired, verifyOneTimeCode } = useAuth(
-  { isPublic: true }
-)
-
-function countdownResendCode() {
-  resendCodeTimer.value--
-  if (resendCodeTimer.value <= 0) {
-    clearInterval(timer)
-  }
-}
-
-async function resendCode() {
-  resendCodeTimer.value = 60
-  await signInWithOtp(formData.value.email, formData.value.captchaToken)
-
-  const timer = setInterval(countdownResendCode, 1000)
-}
-
-watch(oneTimeCodeRequired, (value) => {
-  if (value) {
-    const timer = setInterval(countdownResendCode, 1000)
-  }
-})
+const { loginError, signInWithOtp, signInWithOauth, signingIn } = useAuth({ isPublic: true })
 </script>
 
 <style scoped>
 .login-container {
-  margin: auto;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
 }
 
-.login-card {
-  width: 450px;
-  padding: var(--spacing-xl);
-  position: relative;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.or-text {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.or-text::before,
+.or-text::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-text-secondary);
+  margin: 0 var(--spacing-sm);
+}
+
+.btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.btn-group button {
+  color: var(--color-text-primary);
+}
+
+.logo-wrapper {
+  position: fixed;
+  top: calc(var(--spacing-3xl) + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
 }
 </style>

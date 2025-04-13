@@ -1,14 +1,14 @@
 export type Debt = {
   id: number // bigint maps to number in TypeScript
   user_id: string
-  name: string | null
+  name?: string
   balance: number
   apr: number
   min_payment: number
-  extra_payment: number
+  extra_payment?: number
   // Represent timestamp without time zone as string
-  due_date: string | null
-  priority_order: number | null
+  due_date?: string
+  priority_order?: number
   // Represent timestamp with time zone as string
   created_at: string
   // Represent timestamp without time zone as string

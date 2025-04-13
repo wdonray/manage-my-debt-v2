@@ -55,9 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import useProfile from '~/composables/useProfile'
-import type { Profile, ProfileUpdatePayload } from '~/types/database'
+import type { ProfileUpdatePayload } from '~/types/database'
 
 const { profile, loading, error, updateProfile } = useProfile()
 

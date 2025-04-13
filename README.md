@@ -1,4 +1,4 @@
-# Manage My Debt
+# Manage My Debt v2
 
 A simple debt management application built with Nuxt.js and Supabase.
 
@@ -17,4 +17,3 @@ This project utilizes the following technologies and services:
 - **DNS Management:** [AWS Route 53](https://aws.amazon.com/route53/)
 - **Transactional Email:** [Brevo](https://www.brevo.com/) (formerly Sendinblue)
 - **CAPTCHA Service:** [Cloudflare Turnstile](https://www.cloudflare.com/products/turnstile/)
-- **[Other Tools/Libraries]:** (Add any other notable libraries like state management, utility libraries, etc.)

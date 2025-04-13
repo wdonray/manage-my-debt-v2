@@ -16,4 +16,11 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     ...nuxtDoctrineConfig.modules,
   ],
+  supabase: {
+    redirectOptions: {
+      login: '/login',
+      callback: '/confirm',
+      exclude: ['/one-time-code', '/create-account'],
+    },
+  },
 })
