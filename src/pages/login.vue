@@ -41,6 +41,7 @@
           validations="required|email"
           autocomplete="email"
           aria-required="true"
+          :readonly="signingIn"
         />
 
         <Flex stack gap="xl">
@@ -61,14 +62,14 @@
       <span class="text-secondary or-text">Or continue with</span>
 
       <div class="btn-group">
-        <Button class="btn-outline btn-block" @click="() => signInWithOauth('google')">
+        <Button class="btn-outline btn-block" :disabled="signingIn" @click="() => signInWithOauth('google')">
           <Flex gap="sm" align="center">
             <img src="/svg/google.svg" alt="Google" :width="iconSize" :height="iconSize" />
             Google
           </Flex>
         </Button>
 
-        <Button class="btn-outline btn-block" @click="() => signInWithOauth('facebook')">
+        <Button class="btn-outline btn-block" :disabled="signingIn" @click="() => signInWithOauth('facebook')">
           <Flex gap="sm" align="center">
             <img src="/svg/facebook.svg" alt="Facebook" :width="iconSize" :height="iconSize" />
             Facebook
