@@ -1,6 +1,6 @@
 <template>
-  <div class="auth-layout" :class="{ mobile }" v-if="mounted">
-    <template v-if="mobile">
+  <div class="auth-layout" :class="{ mobile, desktop }" v-if="mounted">
+    <template v-if="!desktop">
       <motion.div
         :initial="{ opacity: 0 }"
         :animate="{ opacity: 1, transition: { duration: 0.5 } }"
@@ -11,9 +11,7 @@
     <template v-else>
       <div class="carousel-wrapper">
         <Carousel :items="carouselItems" />
-
         <motion.img
-          v-if="!mobile"
           src="/webp/logo-light.webp"
           alt="logo"
           class="logo"
@@ -69,7 +67,7 @@ import { motion } from 'motion-v'
 
 const mounted = ref(false)
 const colorMode = useColorMode()
-const { mobile } = useBreakpoint()
+const { mobile, desktop } = useBreakpoint()
 
 const carouselItems = ['/webp/ava1.webp', '/webp/ava2.webp', '/webp/ava3.webp']
 
@@ -85,6 +83,12 @@ onMounted(() => {
 </script>
 
 <style>
+:root {
+  --z-index-low: 1;
+  --z-index-medium: 100;
+  --z-index-high: 200;
+}
+
 .light {
   --appearance-toggle-color: var(--color-gray-600);
   --mobile-header-bg-image:
@@ -107,17 +111,17 @@ onMounted(() => {
     ),
     url('/webp/ava1.webp');
 }
-
-:root {
-  --z-index-low: 1;
-  --z-index-medium: 100;
-  --z-index-high: 200;
-}
 </style>
 
 <style scoped>
-.auth-layout.mobile {
+.auth-layout {
+  display: grid;
   grid-template-columns: 1fr;
+  min-height: 100vh;
+}
+
+.auth-layout.desktop {
+  grid-template-columns: 1fr 1fr;
 }
 
 .carousel-wrapper {
@@ -130,6 +134,17 @@ onMounted(() => {
   left: var(--spacing-2xl);
   width: 100px;
   height: 100px;
+  z-index: var(--z-index-high);
+}
+
+main {
+  height: 100%;
+  width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-4xl);
   z-index: var(--z-index-high);
 }
 
@@ -152,30 +167,12 @@ main.mobile {
   transition: background-image 0.5s;
   z-index: var(--z-index-low);
 }
-</style>
-
-<style scoped>
-.auth-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-}
 
 .appearance-toggle {
   position: fixed;
   top: calc(var(--spacing-md) + env(safe-area-inset-top));
   right: calc(var(--spacing-md) + env(safe-area-inset-right));
   z-index: var(--z-index-medium);
-}
-
-main {
-  height: 100%;
-  width: 550px;
-  display: flex;
-  align-items: center;
-  margin: auto;
-  padding-inline: var(--spacing-4xl);
-  z-index: var(--z-index-high);
 }
 
 footer {

@@ -1,6 +1,6 @@
 <template>
   <Flex stack gap="2xl" class="login-container">
-    <div class="logo-wrapper" v-if="mobile">
+    <div class="logo-wrapper" v-if="!desktop">
       <motion.img
         :src="colorMode.preference === 'light' ? '/webp/logo-light.webp' : '/webp/logo-dark.webp'"
         alt="logo"
@@ -87,7 +87,7 @@ definePageMeta({
 })
 
 const colorMode = useColorMode()
-const { mobile } = useBreakpoint()
+const { desktop } = useBreakpoint()
 
 const iconSize = 30
 
@@ -145,7 +145,7 @@ const { loginError, signInWithOtp, signInWithOauth, signingIn } = useAuth({ isPu
 }
 
 .logo {
-  width: 100px;
-  height: 100px;
+  width: 5rem;
+  height: 5rem;
 }
 </style>
