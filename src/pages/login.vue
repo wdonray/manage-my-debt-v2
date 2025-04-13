@@ -1,33 +1,11 @@
 <template>
   <Flex stack gap="2xl" class="login-container">
-    <div class="logo-wrapper" v-if="!desktop">
-      <motion.img
-        :src="colorMode.preference === 'light' ? '/webp/logo-light.webp' : '/webp/logo-dark.webp'"
-        alt="logo"
-        class="logo"
-        :initial="{ opacity: 0, scale: 0.5 }"
-        :animate="{
-          opacity: 1,
-          scale: 1,
-          transition: {
-            type: 'spring',
-            stiffness: 100,
-            damping: 10,
-          },
-        }"
-      />
-    </div>
-
     <div>
       <h1>Get Started!</h1>
       <small class="text-secondary">Log in to manage your debts and achieve financial freedom</small>
     </div>
 
     <Flex stack gap="xl" v-auto-animate>
-      <Notice v-if="loginError" type="error" role="alert" aria-live="polite">
-        {{ formatCapitalize(loginError) || 'An error occurred' }}
-      </Notice>
-
       <FormWithValidation
         @submit="() => signInWithOtp(formData.email, formData.captchaToken)"
         @input="loginError = ''"
@@ -85,6 +63,7 @@ import { motion } from 'motion-v'
 
 definePageMeta({
   layout: 'authenticate',
+  middleware: 'auth',
 })
 
 const colorMode = useColorMode()
@@ -135,18 +114,5 @@ const { loginError, signInWithOtp, signInWithOauth, signingIn } = useAuth({ isPu
 
 .btn-group button {
   color: var(--color-text-primary);
-}
-
-.logo-wrapper {
-  position: fixed;
-  top: calc(var(--spacing-3xl) + env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-}
-
-.logo {
-  width: 5rem;
-  height: 5rem;
 }
 </style>

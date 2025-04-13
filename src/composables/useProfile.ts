@@ -15,7 +15,7 @@ export default function useProfile() {
     error.value = null
 
     try {
-      const data = await $fetch(`/api/get/profiles/user/${user.value.id}`)
+      const data = await $fetch(`/api/get/profiles/${user.value.id}`)
       profile.value = data
     } catch (err) {
       error.value = err

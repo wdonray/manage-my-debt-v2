@@ -4,10 +4,12 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
   const url = useRequestURL()
   const redirectInfo = useSupabaseCookieRedirect()
   const router = useRouter()
+  const route = useRoute()
 
-  const loginError = ref('')
+  const loginError = useState('loginError', () => '')
   const signOutError = ref('')
   const signingIn = ref(false)
+  const verifyingCode = ref(false)
 
   async function signInWithOtp(email: string, captchaToken: string) {
     if (!email || !captchaToken) {
@@ -37,14 +39,13 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
       return
     }
 
+    loginError.value = ''
+
     if (existingUser) {
       router.push({ path: '/one-time-code', query: { email, captchaToken } })
     } else {
       router.push({ path: '/create-account', query: { email } })
     }
-
-    loginError.value = ''
-    signingIn.value = false
   }
 
   async function verifyOneTimeCode(email: string, token: string) {
@@ -52,6 +53,8 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
       loginError.value = 'Email and token are required'
       return
     }
+
+    verifyingCode.value = true
 
     const { error } = await supabase.auth.verifyOtp({
       email,
@@ -61,6 +64,7 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
 
     if (error) {
       loginError.value = error.message
+      verifyingCode.value = false
       return
     }
 
@@ -116,6 +120,13 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
     )
   }
 
+  watch(
+    () => route.name,
+    () => {
+      loginError.value = ''
+    }
+  )
+
   return {
     loginError,
     signingIn,
@@ -123,6 +134,7 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
     signInWithOtp,
     signOut,
     user,
+    verifyingCode,
     verifyOneTimeCode,
   }
 }

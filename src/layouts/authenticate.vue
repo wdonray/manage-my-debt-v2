@@ -40,6 +40,12 @@
       </Button>
 
       <div class="content-wrapper">
+        <motion.div v-if="loginError" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }">
+          <Notice type="error" role="alert" aria-live="polite">
+            {{ loginError }}
+          </Notice>
+        </motion.div>
+
         <Flex stack align="center" gap="2xl">
           <slot />
         </Flex>
@@ -70,6 +76,8 @@ import { motion } from 'motion-v'
 const mounted = ref(false)
 const colorMode = useColorMode()
 const { mobile, desktop } = useBreakpoint()
+
+const loginError = useState('loginError', () => '')
 
 const carouselItems = ['/webp/ava1.webp', '/webp/ava2.webp', '/webp/ava3.webp']
 

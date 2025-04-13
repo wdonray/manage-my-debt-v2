@@ -3,6 +3,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'authenticate',
+  middleware: 'auth',
 })
 
 const router = useRouter()

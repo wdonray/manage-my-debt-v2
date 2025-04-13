@@ -1,5 +1,5 @@
 <template>
-  <Flex stack class="one-time-code-container">
+  <div class="one-time-code-container">
     <FormWithValidation
       @submit="() => verifyOneTimeCode(email, formData.token)"
       @input="loginError = ''"
@@ -21,9 +21,11 @@
         label="One-time code"
         id="token"
         name="token"
-        validations="required"
+        validations="required|digits:6"
         placeholder="Enter the 6-digit code"
         autocomplete="one-time-code"
+        :maxlength="6"
+        :readonly="verifyingCode"
       />
 
       <Flex stack gap="xl">
@@ -32,7 +34,9 @@
             class="btn-text"
             style="font-size: var(--text-xsmall)"
             @click="resendCode"
-            :disabled="resendCodeTimer > 0"
+            :disabled="resendCodeTimer > 0 || verifyingCode"
+            type="button"
+            aria-busy="resendingCode"
           >
             Didn't receive the code? Click to resend
             <span v-if="resendCodeTimer > 0">({{ resendCodeTimer }}s)</span>
@@ -40,18 +44,22 @@
         </div>
 
         <Grid gap="md">
-          <Button class="btn-outline" type="button" @click="$router.back()">Back</Button>
-          <Button class="btn-primary" type="submit" aria-busy="signingIn">Verify Code</Button>
+          <Button class="btn-outline" type="button" :disabled="verifyingCode" @click="$router.back()">Back</Button>
+          <Button class="btn-primary" type="submit" :disabled="verifyingCode" aria-busy="verifyingCode">
+            Verify Code
+          </Button>
         </Grid>
       </Flex>
     </FormWithValidation>
-  </Flex>
+  </div>
 </template>
 
 <script setup lang="ts">
 definePageMeta({
   layout: 'authenticate',
+  middleware: 'auth',
 })
+
 const router = useRouter()
 
 const { email, captchaToken } = useRoute().query as { email: string; captchaToken: string }
@@ -60,7 +68,7 @@ if (!email || !captchaToken) {
   router.push('/login')
 }
 
-const { loginError, verifyOneTimeCode, signInWithOtp } = useAuth({ isPublic: true })
+const { loginError, verifyOneTimeCode, signInWithOtp, verifyingCode } = useAuth({ isPublic: true })
 
 const formData = ref({ token: '' })
 
