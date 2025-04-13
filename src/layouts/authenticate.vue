@@ -39,8 +39,10 @@
         <Icon :name="appearanceIconName" size="var(--text-h2)" aria-hidden="true" />
       </Button>
 
-      <Flex stack align="center" gap="2xl">
-        <slot />
+      <div class="content-wrapper">
+        <Flex stack align="center" gap="2xl">
+          <slot />
+        </Flex>
 
         <footer>
           <Flex stack gap="sm" align="center">
@@ -57,7 +59,7 @@
             </small>
           </Flex>
         </footer>
-      </Flex>
+      </div>
     </main>
   </div>
 </template>
@@ -146,6 +148,14 @@ main {
   justify-content: center;
   padding: var(--spacing-4xl);
   z-index: var(--z-index-high);
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xl);
+  flex: 1;
+  justify-content: center;
 }
 
 main.mobile {
