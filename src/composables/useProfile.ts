@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js'
 
 export default function useProfile() {
   const { user } = useAuth()
-  const profile: Ref<Profile | null> = ref(null)
+  const profile: Ref<Profile> = ref({} as Profile)
   const loading = ref(false)
   const error = ref<any>(null)
 
@@ -19,7 +19,7 @@ export default function useProfile() {
       profile.value = data
     } catch (err) {
       error.value = err
-      profile.value = null
+      profile.value = {} as Profile
     } finally {
       loading.value = false
     }
@@ -48,7 +48,7 @@ export default function useProfile() {
       if (currentUser) {
         fetchProfile()
       } else {
-        profile.value = null
+        profile.value = {} as Profile
       }
     },
     { immediate: true }

@@ -1,9 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="user">
     <Flex stack gap="md" v-auto-animate>
       <Flex align="baseline">
-        <h1 style="margin: 0">Manage My Debt</h1>
-        <FlexSpace />
         <span class="text-secondary">{{ user.email }}</span>
         <small>
           <NuxtLink class="highlight" to="/profile">Edit Profile</NuxtLink>
