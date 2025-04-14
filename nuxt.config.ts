@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     '@nuxtjs/turnstile',
     'motion-v/nuxt',
     '@nuxt/scripts',
+    '@nuxt/fonts',
     ...nuxtDoctrineConfig.modules,
   ],
   supabase: {

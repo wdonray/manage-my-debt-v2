@@ -11,21 +11,25 @@
     <template v-else>
       <div class="carousel-wrapper">
         <Carousel :items="carouselItems" />
-        <motion.img
-          src="/webp/logo-light.webp"
-          alt="logo"
-          class="logo"
-          :initial="{ opacity: 0, scale: 0.5 }"
-          :animate="{
-            opacity: 0.4,
-            scale: 1,
-            transition: {
-              type: 'spring',
-              stiffness: 100,
-              damping: 10,
-            },
-          }"
-        />
+
+        <Flex align="center" gap="sm" class="logo-wrapper">
+          <motion.img
+            src="/webp/logo-light.webp"
+            alt="logo"
+            :initial="{ opacity: 0, scale: 0.5 }"
+            :animate="{
+              opacity: 1,
+              scale: 1,
+              transition: {
+                type: 'spring',
+                stiffness: 100,
+                damping: 10,
+              },
+            }"
+          />
+
+          <span>Manage My Debt</span>
+        </Flex>
       </div>
     </template>
 
@@ -101,25 +105,22 @@ onMounted(() => {
 
 .light {
   --appearance-toggle-color: var(--color-gray-600);
-  --mobile-header-bg-image:
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-page-background) 0%, transparent) 0%,
-      color-mix(in srgb, var(--color-page-background) 100%, transparent) 30%,
-      var(--color-page-background)
-    ),
-    url('/webp/ava3.webp');
+  --mobile-header-bg-gradient: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-page-background) 60%, transparent) 0%,
+    var(--color-page-background) 100%
+  );
+  --mobile-header-bg-image: url('/webp/ava1.webp');
 }
 
 .dark {
   --appearance-toggle-color: var(--color-gray-50);
-  --mobile-header-bg-image:
-    linear-gradient(
-      to bottom,
-      color-mix(in srgb, var(--color-page-background) 80%, transparent) 0%,
-      var(--color-page-background) 100%
-    ),
-    url('/webp/ava1.webp');
+  --mobile-header-bg-gradient: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-page-background) 80%, transparent) 0%,
+    var(--color-page-background) 100%
+  );
+  --mobile-header-bg-image: url('/webp/ava1.webp');
 }
 </style>
 
@@ -138,13 +139,19 @@ onMounted(() => {
   position: relative;
 }
 
-.logo {
+.logo-wrapper {
   position: absolute;
-  top: var(--spacing-2xl);
-  left: var(--spacing-2xl);
-  width: 100px;
-  height: 100px;
+  top: var(--spacing-3xl);
+  left: var(--spacing-3xl);
   z-index: var(--z-index-high);
+  color: var(--color-gray-700);
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+}
+
+.logo-wrapper img {
+  width: 3rem;
+  height: 3rem;
 }
 
 main {
@@ -179,10 +186,10 @@ main.mobile {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: var(--mobile-header-bg-image);
+  background-image: var(--mobile-header-bg-gradient), var(--mobile-header-bg-image);
   background-size: cover;
   background-position: center;
-  transition: background-image 0.5s;
+  transition: background-color 0.5s ease-in-out;
   z-index: var(--z-index-low);
 }
 
