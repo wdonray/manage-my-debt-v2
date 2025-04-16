@@ -20,13 +20,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (!body.apr || body.apr <= 0) {
-    throw createError({
-      statusCode: 400,
-      message: 'apr must be a positive number',
-    })
-  }
-
   if (!body.min_payment || body.min_payment <= 0) {
     throw createError({
       statusCode: 400,
@@ -48,6 +41,8 @@ export default defineEventHandler(async (event) => {
       extra_payment: body.extra_payment || 0,
       due_date: body.due_date || null,
       priority_order: body.priority_order || null,
+      status: body.status || null,
+      start_date: body.start_date || null,
     })
     .select()
 

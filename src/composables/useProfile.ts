@@ -4,9 +4,11 @@ import type { User } from '@supabase/supabase-js'
 
 export default function useProfile() {
   const { user } = useAuth()
-  const profile: Ref<Profile> = ref({} as Profile)
+  const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
   const loading = ref(false)
   const error = ref<any>(null)
+
+  const loaded = computed(() => Object.keys(profile.value).length > 0)
 
   async function fetchProfile() {
     if (!user.value?.id) return
@@ -56,6 +58,7 @@ export default function useProfile() {
 
   return {
     profile,
+    loaded,
     loading,
     error,
     fetchProfile,

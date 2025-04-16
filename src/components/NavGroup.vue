@@ -9,11 +9,7 @@
 
         <FlexSpace />
 
-        <motion.div
-          class="accordion-icon"
-          :animate="{ rotate: active ? 180 : 0 }"
-          :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
-        >
+        <motion.div class="accordion-icon" :animate="{ rotate: active ? 180 : 0 }" :transition>
           <Icon name="ph:caret-down" size="18" />
         </motion.div>
       </Flex>
@@ -27,7 +23,8 @@
       :aria-labelledby="`accordion-header-${title}`"
       :initial="false"
       :animate="{ height: active ? 'auto' : 0 }"
-      :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
+      :transition
+      :aria-hidden="!active"
     >
       <div class="nav-group-items">
         <slot />
@@ -44,6 +41,12 @@ const props = defineProps<{
   title: string
   icon: string
 }>()
+
+const transition = {
+  type: 'spring',
+  stiffness: 400,
+  damping: 30,
+}
 
 const active = useLocalStorage(`nav-group-${props.title}-active`, false)
 

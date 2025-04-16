@@ -1,156 +1,171 @@
 <template>
-  <div class="container" v-if="user">
-    <Flex stack gap="md" v-auto-animate>
-      <Flex align="baseline">
-        <span class="text-secondary">{{ user.email }}</span>
-        <small>
-          <NuxtLink class="highlight" to="/profile">Edit Profile</NuxtLink>
-        </small>
-      </Flex>
+  <Flex stack class="container" v-if="user && profileLoaded && debtsLoaded">
+    <section class="welcome-message">
+      <h1 style="font-size: 32px">
+        <template v-if="name && debts.length > 0">Welcome back, {{ name }}</template>
+        <template v-else>
+          <Flex align="center" gap="sm" wrap>
+            <Icon v-if="!mobile" name="ph:hand-waving" size="32" />
+            <span>Welcome to Manage My Debt!</span>
+          </Flex>
+        </template>
+      </h1>
 
-      <Flex align="center">
-        <FlexSpace />
-        <Button class="btn-outline btn-small" @click="resetForm" v-if="editingDebt">Cancel Edit</Button>
-        <Button class="btn-primary btn-small" @click="showForm = !showForm" v-else>
-          {{ showForm ? 'Cancel' : 'Add New Debt' }}
-        </Button>
-      </Flex>
-
-      <Card v-if="showForm" border>
-        <Flex stack gap="md">
-          <h3>{{ editingDebt ? 'Edit Debt' : 'Add New Debt' }}</h3>
-
-          <FormWithValidation @submit="saveDebt">
-            <Grid columns="1fr 1fr 1fr 1fr">
-              <FieldText v-model="formData.name" label="Name" optional placeholder="e.g., Chase Credit Card" />
-              <FieldCurrency v-model="formData.balance" label="Balance *" validations="required|min_value:1" />
-              <FieldPercentage v-model="formData.apr" label="APR (%) *" validations="required|min_value:1" />
-              <FieldCurrency
-                v-model="formData.min_payment"
-                label="Minimum Payment *"
-                validations="required|min_value:1"
-              />
-              <FieldCurrency
-                v-model="formData.extra_payment"
-                label="Extra Payment"
-                optional
-                validations="min_value:0"
-              />
-              <FieldText v-model="formData.due_date" label="Due Date" type="date" optional />
-            </Grid>
-            <Flex style="justify-content: flex-end">
-              <Button class="btn-primary" type="submit" :disabled="loading">
-                {{ editingDebt ? 'Update Debt' : 'Add Debt' }}
-              </Button>
-            </Flex>
-          </FormWithValidation>
-        </Flex>
-      </Card>
-
-      <div v-if="loading" class="text-center">
-        <p>Loading debts...</p>
-      </div>
-
-      <Notice v-else-if="error" type="error" role="alert">Failed to load debts: {{ error.message }}</Notice>
-
-      <div v-else-if="debts.length > 0">
-        <DataTable :rows="debts" :columns borderless striped>
-          <template #name="{ row }">
-            <div>{{ row.name || 'Unnamed Debt' }}</div>
-          </template>
-
-          <template #balance="{ row }">
-            <div>{{ formatCurrency(row.balance) }}</div>
-          </template>
-
-          <template #apr="{ row }">
-            <div>{{ formatPercentage(row.apr) }}</div>
-          </template>
-
-          <template #min_payment="{ row }">
-            <div>{{ formatCurrency(row.min_payment) }}</div>
-          </template>
-
-          <template #extra_payment="{ row }">
-            <div>{{ formatCurrency(row.extra_payment) }}</div>
-          </template>
-
-          <template #due_date="{ row }">
-            <div>{{ row.due_date ? formatDate(row.due_date) : 'Not set' }}</div>
-          </template>
-
-          <template #actions="{ row }">
-            <Flex gap="sm">
-              <Button class="btn-text btn-small" @click="editDebt(row)" :disabled="loading">Edit</Button>
-              <Button class="btn-text btn-small" @click="removeDebt(row.id)" :disabled="loading">Delete</Button>
-            </Flex>
-          </template>
-        </DataTable>
-      </div>
-      <Notice v-else type="info" role="alert">
-        <p>No debts found. Add your first debt to get started!</p>
+      <Notice v-if="debts.length === 0" type="info" role="alert">
+        Let's get started by adding your first debt
+        <template #actions>
+          <NuxtLink to="/debts/new">
+            <Button class="btn-primary btn-small">Add Debt</Button>
+          </NuxtLink>
+        </template>
       </Notice>
+    </section>
 
-      <Flex justify="end">
-        <Button class="btn-outline btn-small" @click="signOut">Sign Out</Button>
+    <Notice v-if="totalMonthlyPayments > totalDebt" type="warning" role="alert">
+      <small>
+        Your total monthly payments ({{ formatCurrency(totalMonthlyPayments) }}) exceed your total debt ({{
+          formatCurrency(totalDebt)
+        }}). Please review your debt entries in
+        <NuxtLink to="/debts" class="highlight">Debts.</NuxtLink>
+      </small>
+    </Notice>
+
+    <section class="quick-actions">
+      <QuickActions />
+      <hr />
+    </section>
+
+    <section class="debt-summary">
+      <Grid columns="1fr 1fr 1fr" gap="md">
+        <DashboardCard icon="ph:money" title="Total Debt" color="var(--color-purple-400)">
+          <h2>{{ formatCurrency(totalDebt) }}</h2>
+        </DashboardCard>
+
+        <DashboardCard icon="ph:calendar-check" title="Monthly Payments" color="var(--color-blue-400)">
+          <h2>{{ formatCurrency(totalMonthlyPayments) }}</h2>
+        </DashboardCard>
+
+        <DashboardCard icon="ph:rocket" title="Extra Payment" color="var(--color-green-400)">
+          <h2>{{ formatCurrency(totalExtraPayment) }}</h2>
+        </DashboardCard>
+      </Grid>
+    </section>
+
+    <section class="debt-overview">
+      <Grid columns="1fr 1fr" gap="md">
+        <DashboardCard color="var(--color-red-400)">
+          <template #title>
+            <Flex align="center" gap="sm">
+              <Icon name="ph:target" size="24" style="color: var(--color-red-400)" />
+              <h3 style="margin: 0">Priority Debt</h3>
+              <small class="text-secondary">(Highest APR)</small>
+            </Flex>
+          </template>
+
+          <Flex stack v-if="priorityDebt">
+            <Flex gap="sm">
+              <span class="text-secondary">Name</span>
+              <strong>{{ priorityDebt.name || 'Unnamed Debt' }}</strong>
+            </Flex>
+            <Flex gap="sm">
+              <span class="text-secondary">APR</span>
+              <strong>{{ formatPercentage(priorityDebt.apr) }}</strong>
+            </Flex>
+            <Flex gap="sm">
+              <span class="text-secondary">Balance</span>
+              <strong>{{ formatCurrency(priorityDebt.balance) }}</strong>
+            </Flex>
+            <Flex gap="sm">
+              <span class="text-secondary">Monthly Payment</span>
+              <strong>{{ formatCurrency(priorityDebt.min_payment + (priorityDebt.extra_payment || 0)) }}</strong>
+            </Flex>
+          </Flex>
+
+          <p v-else class="text-secondary">No debts found</p>
+        </DashboardCard>
+
+        <DashboardCard color="var(--color-purple-500)">
+          <template #title>
+            <Flex align="center" gap="sm">
+              <Icon name="ph:chart-line-up" size="24" style="color: var(--color-purple-500)" />
+              <h3 style="margin: 0">Debt Overview</h3>
+            </Flex>
+          </template>
+
+          <Flex stack>
+            <Flex gap="sm">
+              <span class="text-secondary">Total Debts</span>
+              <strong>{{ debts.length }}</strong>
+            </Flex>
+            <Flex gap="sm">
+              <span class="text-secondary">Average APR</span>
+              <strong>{{ formatPercentage(averageApr) }}</strong>
+            </Flex>
+            <Flex gap="sm">
+              <span class="text-secondary">Total Interest Rate</span>
+              <strong>{{ formatPercentage(totalInterestRate) }}</strong>
+            </Flex>
+          </Flex>
+        </DashboardCard>
+      </Grid>
+    </section>
+
+    <section v-if="nextDebts.length > 0" class="next-debts">
+      <Flex align="center" gap="sm" style="margin-bottom: var(--spacing-md)">
+        <Icon name="ph:list-numbers" size="24" color="var(--color-blue-500)" />
+        <h3>Next Priority Debts</h3>
       </Flex>
-    </Flex>
-  </div>
+      <Grid columns="1fr 1fr" gap="md">
+        <DashboardCard v-for="(debt, index) in nextDebts" :key="debt.id" color="var(--color-yellow-500)">
+          <Flex stack gap="sm">
+            <Flex align="center" gap="sm">
+              <Icon
+                :name="index === 0 ? 'ph:number-circle-one' : 'ph:number-circle-two'"
+                size="24"
+                color="var(--color-yellow-500)"
+              />
+              <span class="text-secondary">Name</span>
+            </Flex>
+            <strong>{{ debt.name || 'Unnamed Debt' }}</strong>
+            <span class="text-secondary">APR</span>
+            <strong>{{ formatPercentage(debt.apr) }}</strong>
+            <span class="text-secondary">Balance</span>
+            <strong>{{ formatCurrency(debt.balance) }}</strong>
+          </Flex>
+        </DashboardCard>
+      </Grid>
+    </section>
+  </Flex>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import useDebts from '~/composables/useDebts'
-import type { Debt, DebtCreatePayload } from '~/types/database'
+const { profile, loaded: profileLoaded } = useProfile()
+const { user } = useAuth()
+const { debts, loaded: debtsLoaded } = useDebts()
+const { mobile } = useBreakpoint()
 
-const { user, signOut } = useAuth()
-const { debts, loading, error, addDebt, updateDebt, removeDebt } = useDebts()
+const name = computed(() => profile.value?.username || profile.value?.full_name)
+const totalDebt = computed(() => debts.value.reduce((acc, debt) => acc + debt.balance, 0))
+const totalMonthlyPayments = computed(() => debts.value.reduce((acc, debt) => acc + debt.min_payment, 0))
+const totalExtraPayment = computed(() => debts.value.reduce((acc, debt) => acc + (debt.extra_payment || 0), 0))
 
-const showForm = ref(false)
-const editingDebt = ref<Debt | null>(null)
-const formData = ref<DebtCreatePayload>(emptyFormData())
+// Sort debts by APR in descending order
+const sortedDebts = computed(() => [...debts.value].sort((a, b) => b.apr - a.apr))
+const priorityDebt = computed(() => sortedDebts.value[0])
+const nextDebts = computed(() => sortedDebts.value.slice(1, 3)) // Show next 2 highest APR debts
 
-const columns = [
-  { key: 'name', display: 'Name' },
-  { key: 'balance', display: 'Balance' },
-  { key: 'apr', display: 'APR' },
-  { key: 'min_payment', display: 'Min Payment' },
-  { key: 'extra_payment', display: 'Extra Payment' },
-  { key: 'due_date', display: 'Due Date' },
-  { key: 'actions', display: '' },
-]
+// Calculate average APR
+const averageApr = computed(() => {
+  if (debts.value.length === 0) return 0
+  const totalApr = debts.value.reduce((acc, debt) => acc + debt.apr, 0)
+  return totalApr / debts.value.length
+})
 
-function emptyFormData(): DebtCreatePayload {
-  return { balance: 0, apr: 0, min_payment: 0 }
-}
-
-function resetForm() {
-  editingDebt.value = null
-  showForm.value = !showForm.value
-  formData.value = emptyFormData()
-}
-
-function editDebt(debt: Debt) {
-  editingDebt.value = debt
-  const { id, user_id, created_at, updated_at, ...editableData } = debt
-  formData.value = editableData
-  showForm.value = true
-}
-
-async function saveDebt() {
-  if (editingDebt.value) {
-    await updateDebt(editingDebt.value.id, formData.value)
-  } else {
-    await addDebt(formData.value)
-  }
-
-  resetForm()
-}
+// Calculate total interest rate (weighted by balance)
+const totalInterestRate = computed(() => {
+  if (debts.value.length === 0) return 0
+  const totalBalance = totalDebt.value
+  if (totalBalance === 0) return 0
+  return debts.value.reduce((acc, debt) => acc + debt.apr * debt.balance, 0) / totalBalance
+})
 </script>
-
-<style scoped>
-.container {
-  max-width: 1200px;
-  padding: var(--spacing-lg);
-}
-</style>

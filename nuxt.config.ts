@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     ...nuxtDoctrineConfig.modules,
   ],
+  icon: {
+    ...nuxtDoctrineConfig.icon,
+    clientBundle: {
+      scan: true,
+    },
+  },
   supabase: {
     redirectOptions: {
       login: '/login',

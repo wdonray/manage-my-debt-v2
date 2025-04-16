@@ -47,7 +47,7 @@ const active = computed(() => useRoute().path === props.to)
   color: var(--color-nav-item-text);
 }
 
-.nav-item:hover {
+.nav-item:hover:not(.active) {
   background-color: var(--color-nav-item-hover);
 }
 </style>

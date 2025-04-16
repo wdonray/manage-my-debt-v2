@@ -6,7 +6,9 @@ export type Debt = {
   apr: number
   min_payment: number
   extra_payment?: number
+  status: 'current' | 'behind' | 'paid_off' | 'paused' | 'closed' | null
   // Represent timestamp without time zone as string
+  start_date?: string
   due_date?: string
   priority_order?: number
   // Represent timestamp with time zone as string

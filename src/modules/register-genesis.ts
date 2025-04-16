@@ -40,7 +40,7 @@ export default defineNuxtModule({
     })
 
     /** Use */
-    const use = new Set(['useBindableGap', 'useBreakpoint', 'useForm'])
+    const use = new Set(['useBindableGap', 'useBreakpoint', 'useForm', 'useSteps'])
 
     use.forEach((name) => {
       addImports({ name, from: '@christfirst/genesis/use' })

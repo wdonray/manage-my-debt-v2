@@ -133,6 +133,7 @@ export default function useAuth({ isPublic = false }: { isPublic?: boolean } = {
     signInWithOauth,
     signInWithOtp,
     signOut,
+    signOutError,
     user,
     verifyingCode,
     verifyOneTimeCode,

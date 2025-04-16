@@ -1,5 +1,5 @@
 import { serverSupabaseClient } from '#supabase/server'
-
+import type { DebtUpdatePayload } from '~/types/database'
 export default defineEventHandler(async (event) => {
   // Get the debt ID from the URL parameter
   const debtId = event.context.params?.id
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get the request body
-  const body = await readBody(event)
+  const body = await readBody<DebtUpdatePayload>(event)
 
   // Validate that at least one field is being updated
   if (Object.keys(body).length === 0) {
