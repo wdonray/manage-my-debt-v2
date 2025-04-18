@@ -1,5 +1,5 @@
 <template>
-  <Flex stack class="container" v-if="user && profileLoaded && debtsLoaded">
+  <Flex v-if="user && profileLoaded && debtsLoaded" stack class="container">
     <section class="welcome-message">
       <h1 style="font-size: 32px">
         <template v-if="name && debts.length > 0">Welcome back, {{ name }}</template>
@@ -35,106 +35,122 @@
       <hr />
     </section>
 
-    <section class="debt-summary">
-      <Grid columns="1fr 1fr 1fr" gap="md">
-        <DashboardCard icon="ph:money" title="Total Debt" color="var(--color-purple-400)">
-          <h2>{{ formatCurrency(totalDebt) }}</h2>
-        </DashboardCard>
+    <Flex stack gap="xl">
+      <section class="debt-summary">
+        <Grid columns="1fr 1fr 1fr" gap="md">
+          <DashboardCard icon="ph:money" title="Total Debt" color="var(--color-purple-400)">
+            <h2>{{ formatCurrency(totalDebt) }}</h2>
+          </DashboardCard>
 
-        <DashboardCard icon="ph:calendar-check" title="Monthly Payments" color="var(--color-blue-400)">
-          <h2>{{ formatCurrency(totalMonthlyPayments) }}</h2>
-        </DashboardCard>
+          <DashboardCard icon="ph:calendar-check" title="Monthly Payments" color="var(--color-blue-400)">
+            <h2>{{ formatCurrency(totalMonthlyPayments) }}</h2>
+          </DashboardCard>
 
-        <DashboardCard icon="ph:rocket" title="Extra Payment" color="var(--color-green-400)">
-          <h2>{{ formatCurrency(totalExtraPayment) }}</h2>
-        </DashboardCard>
-      </Grid>
-    </section>
+          <DashboardCard icon="ph:rocket" title="Extra Payment" color="var(--color-green-400)">
+            <h2>{{ formatCurrency(totalExtraPayment) }}</h2>
+          </DashboardCard>
+        </Grid>
+      </section>
 
-    <section class="debt-overview">
-      <Grid columns="1fr 1fr" gap="md">
-        <DashboardCard color="var(--color-red-400)">
-          <template #title>
-            <Flex align="center" gap="sm">
-              <Icon name="ph:target" size="24" style="color: var(--color-red-400)" />
-              <h3 style="margin: 0">Priority Debt</h3>
-              <small class="text-secondary">(Highest APR)</small>
-            </Flex>
-          </template>
+      <section class="debt-overview">
+        <Grid columns="1fr 1fr" gap="md">
+          <DashboardCard color="var(--color-red-400)">
+            <template #title>
+              <Flex align="center" gap="sm">
+                <Icon name="ph:target" size="24" style="color: var(--color-red-400)" />
+                <h3 style="margin: 0">Priority Debt</h3>
+                <small class="text-secondary">(Highest APR)</small>
+              </Flex>
+            </template>
 
-          <Flex stack v-if="priorityDebt">
-            <Flex gap="sm">
-              <span class="text-secondary">Name</span>
-              <strong>{{ priorityDebt.name || 'Unnamed Debt' }}</strong>
+            <Flex v-if="priorityDebt" stack>
+              <Flex gap="sm">
+                <span class="text-secondary">Name</span>
+                <strong>{{ priorityDebt.name || 'Unnamed Debt' }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">APR</span>
+                <strong>{{ formatPercentage(priorityDebt.apr) }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">Balance</span>
+                <strong>{{ formatCurrency(priorityDebt.balance) }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">Monthly Payment</span>
+                <strong>{{ formatCurrency(priorityDebt.min_payment + (priorityDebt.extra_payment || 0)) }}</strong>
+              </Flex>
             </Flex>
-            <Flex gap="sm">
-              <span class="text-secondary">APR</span>
-              <strong>{{ formatPercentage(priorityDebt.apr) }}</strong>
-            </Flex>
-            <Flex gap="sm">
-              <span class="text-secondary">Balance</span>
-              <strong>{{ formatCurrency(priorityDebt.balance) }}</strong>
-            </Flex>
-            <Flex gap="sm">
-              <span class="text-secondary">Monthly Payment</span>
-              <strong>{{ formatCurrency(priorityDebt.min_payment + (priorityDebt.extra_payment || 0)) }}</strong>
-            </Flex>
-          </Flex>
 
-          <p v-else class="text-secondary">No debts found</p>
-        </DashboardCard>
+            <p v-else class="text-secondary">No debts found</p>
+          </DashboardCard>
 
-        <DashboardCard color="var(--color-purple-500)">
-          <template #title>
-            <Flex align="center" gap="sm">
-              <Icon name="ph:chart-line-up" size="24" style="color: var(--color-purple-500)" />
-              <h3 style="margin: 0">Debt Overview</h3>
-            </Flex>
-          </template>
+          <DashboardCard color="var(--color-purple-500)">
+            <template #title>
+              <Flex align="center" gap="sm">
+                <Icon name="ph:chart-line-up" size="24" style="color: var(--color-purple-500)" />
+                <h3 style="margin: 0">Debt Overview</h3>
+              </Flex>
+            </template>
 
-          <Flex stack>
-            <Flex gap="sm">
-              <span class="text-secondary">Total Debts</span>
-              <strong>{{ debts.length }}</strong>
-            </Flex>
-            <Flex gap="sm">
-              <span class="text-secondary">Average APR</span>
-              <strong>{{ formatPercentage(averageApr) }}</strong>
-            </Flex>
-            <Flex gap="sm">
-              <span class="text-secondary">Total Interest Rate</span>
-              <strong>{{ formatPercentage(totalInterestRate) }}</strong>
-            </Flex>
-          </Flex>
-        </DashboardCard>
-      </Grid>
-    </section>
+            <Flex stack>
+              <Flex gap="sm">
+                <span class="text-secondary">Total Debts</span>
+                <strong>{{ debts.length }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">Average APR</span>
+                <strong>{{ formatPercentage(averageApr) }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">Total Interest Rate</span>
+                <strong>{{ formatPercentage(totalInterestRate) }}</strong>
+              </Flex>
 
-    <section v-if="nextDebts.length > 0" class="next-debts">
-      <Flex align="center" gap="sm" style="margin-bottom: var(--spacing-md)">
-        <Icon name="ph:list-numbers" size="24" color="var(--color-blue-500)" />
-        <h3>Next Priority Debts</h3>
-      </Flex>
-      <Grid columns="1fr 1fr" gap="md">
-        <DashboardCard v-for="(debt, index) in nextDebts" :key="debt.id" color="var(--color-yellow-500)">
-          <Flex stack gap="sm">
-            <Flex align="center" gap="sm">
-              <Icon
-                :name="index === 0 ? 'ph:number-circle-one' : 'ph:number-circle-two'"
-                size="24"
-                color="var(--color-yellow-500)"
-              />
-              <span class="text-secondary">Name</span>
+              <Flex gap="sm">
+                <span class="text-secondary">Total Debt</span>
+                <strong>{{ formatCurrency(totalDebt) }}</strong>
+              </Flex>
             </Flex>
-            <strong>{{ debt.name || 'Unnamed Debt' }}</strong>
-            <span class="text-secondary">APR</span>
-            <strong>{{ formatPercentage(debt.apr) }}</strong>
-            <span class="text-secondary">Balance</span>
-            <strong>{{ formatCurrency(debt.balance) }}</strong>
-          </Flex>
-        </DashboardCard>
-      </Grid>
-    </section>
+          </DashboardCard>
+        </Grid>
+      </section>
+
+      <section v-if="nextDebts.length > 0" class="next-debts">
+        <Flex align="center" gap="sm" style="margin-bottom: var(--spacing-md)">
+          <Icon name="ph:list-numbers" size="24" color="var(--color-blue-500)" />
+          <h3 style="margin: 0">Next Priority Debts</h3>
+        </Flex>
+        <Grid columns="1fr 1fr" gap="md">
+          <DashboardCard v-for="(debt, index) in nextDebts" :key="debt.id" color="var(--color-yellow-500)">
+            <template #title>
+              <Flex align="center" gap="sm">
+                <Icon
+                  :name="index === 0 ? 'ph:number-circle-one' : 'ph:number-circle-two'"
+                  size="24"
+                  color="var(--color-yellow-500)"
+                />
+                <span class="text-secondary">Name</span>
+              </Flex>
+            </template>
+            <Flex stack>
+              <Flex gap="sm">
+                <span class="text-secondary">Name</span>
+                <strong>{{ debt.name || 'Unnamed Debt' }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">APR</span>
+                <strong>{{ formatPercentage(debt.apr) }}</strong>
+              </Flex>
+              <Flex gap="sm">
+                <span class="text-secondary">Balance</span>
+                <strong>{{ formatCurrency(debt.balance) }}</strong>
+              </Flex>
+            </Flex>
+          </DashboardCard>
+        </Grid>
+      </section>
+    </Flex>
   </Flex>
 </template>
 

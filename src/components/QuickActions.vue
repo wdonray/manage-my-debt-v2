@@ -43,6 +43,16 @@ const actions = [
 ]
 </script>
 
+<style>
+.light {
+  --color-quick-action-hover: var(--color-gray-200);
+}
+
+.dark {
+  --color-quick-action-hover: var(--color-gray-700);
+}
+</style>
+
 <style scoped>
 .quick-actions {
   padding-block: var(--spacing-md);
@@ -69,7 +79,7 @@ const actions = [
 }
 
 .quick-action:hover {
-  background-color: var(--color-nav-item-hover);
+  background-color: var(--color-quick-action-hover);
 }
 
 .quick-action:active {

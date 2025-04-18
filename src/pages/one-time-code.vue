@@ -1,9 +1,9 @@
 <template>
   <div class="one-time-code-container">
     <FormWithValidation
+      aria-label="Verify one-time code form"
       @submit="() => verifyOneTimeCode(email, formData.token)"
       @input="loginError = ''"
-      aria-label="Verify one-time code form"
     >
       <Flex stack gap="sm" style="margin-bottom: var(--spacing-lg)">
         <span>
@@ -17,9 +17,9 @@
       </Flex>
 
       <FieldText
+        id="token"
         v-model="formData.token"
         label="One-time code"
-        id="token"
         name="token"
         validations="required|digits:6"
         placeholder="Enter the 6-digit code"
@@ -33,10 +33,10 @@
           <Button
             class="btn-text"
             style="font-size: var(--text-xsmall)"
-            @click="resendCode"
             :disabled="resendCodeTimer > 0 || verifyingCode"
             type="button"
             aria-busy="resendingCode"
+            @click="resendCode"
           >
             Didn't receive the code? Click to resend
             <span v-if="resendCodeTimer > 0">({{ resendCodeTimer }}s)</span>

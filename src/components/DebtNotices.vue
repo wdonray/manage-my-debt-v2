@@ -1,12 +1,12 @@
 <template>
-  <Flex stack gap="md" class="debt-notices" v-auto-animate>
+  <Flex v-auto-animate stack gap="md" class="debt-notices">
     <!-- High APR Warning -->
     <Notice v-if="showInterestAlert" align="start" type="warning" size="xs">
       <Flex stack gap="sm">
         <strong>High Interest Rate Priority</strong>
         <span>
-          This {{ formatPercentage(apr) }} APR is significantly above average.
-          <template v-if="balance && balance > 0">
+          This {{ formatPercentage(debouncedValues.apr) }} APR is significantly above average.
+          <template v-if="debouncedValues.balance && debouncedValues.balance > 0">
             At this rate, you'll pay approximately {{ interestPerYear }} in interest per year if the balance remains
             unchanged. Following the debt avalanche method, this high-APR debt should be prioritized for additional
             payments after meeting minimum payments on all debts.
@@ -54,47 +54,80 @@
 </template>
 
 <script setup lang="ts">
-// Constants in human-readable format
 const MIN_PAYMENT_PERCENTAGE = 3 // 3%
 const LARGE_BALANCE_AMOUNT = 10000 // $10,000
 const HIGH_APR_PERCENTAGE = 20 // 20%
 
-// Converted constants for internal use
 const MIN_PAYMENT_THRESHOLD = MIN_PAYMENT_PERCENTAGE / 100
 const LARGE_BALANCE_THRESHOLD = LARGE_BALANCE_AMOUNT
 const HIGH_APR_THRESHOLD = HIGH_APR_PERCENTAGE * 10000 // Convert to internal APR format
 
-// Props
-interface Props {
+const props = defineProps<{
   balance: number
   apr: number
   minPayment: number
   extraPayment: number
+}>()
+
+interface DebouncedValues {
+  balance: number | undefined
+  apr: number | undefined
+  minPayment: number | undefined
+  extraPayment: number | undefined
 }
 
-const props = defineProps<Props>()
+// Debounced values
+const debouncedValues = ref<DebouncedValues>({
+  balance: props.balance,
+  apr: props.apr,
+  minPayment: props.minPayment,
+  extraPayment: props.extraPayment,
+})
 
-// Helper functions for APR calculations
+// Watch all props with a single watcher
+watch(
+  props,
+  (newProps) => {
+    setTimeout(() => {
+      debouncedValues.value = {
+        balance: newProps.balance,
+        apr: newProps.apr,
+        minPayment: newProps.minPayment,
+        extraPayment: newProps.extraPayment,
+      }
+    }, 1000)
+  },
+  { deep: true }
+)
+
 function calculateYearlyInterest(balance: number, apr: number): number {
   return balance * (apr / 1000000) // Divide by 1M because apr is in 10000ths
 }
 
-// Computed properties
-const showInterestAlert = computed(() => Number(props.apr) >= HIGH_APR_THRESHOLD && Number(props.balance) > 0)
+// Update computed properties to use debounced values
+const showInterestAlert = computed(
+  () => Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD && Number(debouncedValues.value.balance) > 0
+)
 
 const showLargeBalanceAlert = computed(
-  () => Number(props.balance) >= LARGE_BALANCE_THRESHOLD && Number(props.apr) >= HIGH_APR_THRESHOLD
+  () =>
+    Number(debouncedValues.value.balance) >= LARGE_BALANCE_THRESHOLD &&
+    Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD
 )
 
 const showMinPaymentAlert = computed(() => {
-  const balance = Number(props.balance || 0)
-  const minPayment = Number(props.minPayment || 0)
+  const balance = Number(debouncedValues.value.balance || 0)
+  const minPayment = Number(debouncedValues.value.minPayment || 0)
   return balance > 0 && minPayment > 0 && minPayment < balance * MIN_PAYMENT_THRESHOLD
 })
 
-const showExtraPaymentNote = computed(() => Number(props.extraPayment) > 0 && Number(props.apr) >= HIGH_APR_THRESHOLD)
+const showExtraPaymentNote = computed(
+  () => Number(debouncedValues.value.extraPayment) > 0 && Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD
+)
 
 const interestPerYear = computed(() =>
-  formatCurrency(calculateYearlyInterest(Number(props.balance || 0), Number(props.apr || 0)))
+  formatCurrency(
+    calculateYearlyInterest(Number(debouncedValues.value.balance || 0), Number(debouncedValues.value.apr || 0))
+  )
 )
 </script>

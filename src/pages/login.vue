@@ -5,15 +5,15 @@
       <small class="text-secondary">Log in to manage your debts and achieve financial freedom</small>
     </div>
 
-    <Flex stack gap="xl" v-auto-animate>
+    <Flex v-auto-animate stack gap="xl">
       <FormWithValidation
+        aria-label="Login form"
         @submit="() => signInWithOtp(formData.email, formData.captchaToken)"
         @input="loginError = ''"
-        aria-label="Login form"
       >
         <FieldText
-          v-model="formData.email"
           id="email"
+          v-model="formData.email"
           placeholder="Email"
           name="email"
           validations="required|email"
@@ -59,15 +59,10 @@
 </template>
 
 <script setup lang="ts">
-import { motion } from 'motion-v'
-
 definePageMeta({
   layout: 'authenticate',
   middleware: 'auth',
 })
-
-const colorMode = useColorMode()
-const { desktop } = useBreakpoint()
 
 const iconSize = 30
 

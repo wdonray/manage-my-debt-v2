@@ -17,7 +17,7 @@
         <p>You haven't added any debts yet. Click "Add Debt" to get started.</p>
       </Notice>
 
-      <Flex stack v-else v-auto-animate>
+      <Flex v-else v-auto-animate stack>
         <Flex align="center" gap="md">
           <FlexSpace />
           <label for="status-filter">
@@ -25,9 +25,9 @@
           </label>
           <FieldSelect
             id="status-filter"
+            v-model="statusFilter"
             style="width: 90px; height: 30px"
             disable-error-message
-            v-model="statusFilter"
             :options="statusOptions"
           />
         </Flex>
@@ -45,7 +45,7 @@
           </Flex>
         </Notice>
 
-        <Flex stack v-else-if="!desktop">
+        <Flex v-else-if="!desktop" stack>
           <Card v-for="debt in sortedDebts" :key="debt.id" border gap="md">
             <Flex stack gap="xl">
               <Flex align="center" gap="md">
@@ -94,13 +94,15 @@
                 >
                   Delete
                 </Button>
-                <Button class="btn-small btn-primary">Edit</Button>
+                <NuxtLink :to="`/debts/edit/${debt.id}`">
+                  <Button class="btn-small btn-primary" style="width: 100%">Edit</Button>
+                </NuxtLink>
               </div>
             </Flex>
           </Card>
         </Flex>
 
-        <DataTable v-else class="debts-table" :key="statusFilter" :columns :rows="sortedDebts" striped borderless>
+        <DataTable v-else :key="statusFilter" class="debts-table" :columns :rows="sortedDebts" striped borderless>
           <template #name="{ row }">
             {{ row.name || 'Unnamed Debt' }}
           </template>

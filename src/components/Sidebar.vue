@@ -34,11 +34,13 @@ const { mobile } = useBreakpoint()
 
 <style>
 .light {
-  --color-sidebar-bg: #fafafa;
+  --color-sidebar-background: var(--color-gray-900);
+  --color-sidebar-text: var(--color-gray-300);
 }
 
 .dark {
-  --color-sidebar-bg: #1d1d1d;
+  --color-sidebar-background: var(--color-gray-800);
+  --color-sidebar-text: var(--color-white);
 }
 </style>
 
@@ -48,9 +50,10 @@ const { mobile } = useBreakpoint()
 }
 
 .sidebar {
-  width: 245px;
+  width: var(--sidebar-width);
   height: 100vh;
-  background: var(--color-sidebar-bg);
+  background: var(--color-sidebar-background);
+  color: var(--color-sidebar-text);
   padding: var(--spacing-md);
   position: fixed;
   left: 0;
@@ -69,7 +72,7 @@ const { mobile } = useBreakpoint()
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .sidebar-nav {

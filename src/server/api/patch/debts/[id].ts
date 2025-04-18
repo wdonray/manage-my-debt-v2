@@ -30,13 +30,6 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  if (body.apr !== undefined && body.apr <= 0) {
-    throw createError({
-      statusCode: 400,
-      message: 'apr must be a positive number',
-    })
-  }
-
   if (body.min_payment !== undefined && body.min_payment <= 0) {
     throw createError({
       statusCode: 400,

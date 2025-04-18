@@ -2,8 +2,8 @@
   <Grid columns="1.618fr 1fr" gap="xl" style="position: relative">
     <FormWithValidation @submit="submit">
       <Card border class="form-card">
-        <Flex stack v-auto-animate>
-          <section v-if="currentStep === steps.BASIC_INFO" class="form-section" v-auto-animate>
+        <Flex v-auto-animate stack>
+          <section v-if="currentStep === steps.BASIC_INFO" v-auto-animate class="form-section">
             <h3 class="section-title">
               <Icon name="ph:info" size="24" class="section-icon" />
               Debt Information
@@ -87,8 +87,8 @@
               description="Track if payments are on schedule. Staying current on all minimum payments is crucial for the avalanche method"
             />
             <FieldText
-              type="number"
               v-model="formData.priority_order"
+              type="number"
               label="Custom Priority"
               name="priority_order"
               optional
@@ -118,7 +118,7 @@
       </Card>
     </FormWithValidation>
 
-    <Flex stack v-auto-animate>
+    <Flex v-auto-animate stack>
       <div>
         <Card :shadow="false" class="preview-card">
           <h3 class="preview-title">
@@ -126,9 +126,9 @@
             Liability Preview
           </h3>
 
-          <hr class="preview-divider" />
+          <hr class="preview-divider" >
 
-          <Flex stack gap="xl" v-auto-animate>
+          <Flex v-auto-animate stack gap="xl">
             <!-- Name is optional -->
             <Flex v-if="formData.name" class="preview-item">
               <strong>Name</strong>

@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-layout" :class="{ mobile, desktop }" v-if="mounted">
+  <div v-if="mounted" class="auth-layout" :class="{ mobile, desktop }">
     <template v-if="!desktop">
       <motion.div
         :initial="{ opacity: 0 }"
@@ -37,8 +37,8 @@
       <Button
         class="btn-text appearance-toggle"
         style="color: var(--appearance-toggle-color)"
-        @click="toggleColorMode"
         :aria-label="colorMode.preference === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+        @click="toggleColorMode"
       >
         <Icon :name="appearanceIconName" size="var(--text-h2)" aria-hidden="true" />
       </Button>

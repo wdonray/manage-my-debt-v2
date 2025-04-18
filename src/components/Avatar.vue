@@ -1,9 +1,9 @@
 <template>
-  <NuxtLink to="/profile" class="avatar-container" v-auto-animate>
-    <div class="avatar" v-if="profile.avatar_url">
-      <img :src="profile.avatar_url" :alt="profile?.email || 'Avatar'" />
+  <NuxtLink v-auto-animate to="/profile" class="avatar-container">
+    <div v-if="profile.avatar_url" class="avatar">
+      <img :src="profile.avatar_url" :alt="profile?.email || 'Avatar'" >
     </div>
-    <div class="avatar" v-else>
+    <div v-else class="avatar">
       <Icon name="ph:user" size="40" />
     </div>
   </NuxtLink>

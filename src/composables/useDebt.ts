@@ -4,7 +4,7 @@ export default function useDebt(debtId?: number, { disableFetch = false }: { dis
   const { user } = useAuth()
   const debt = ref<Debt>({} as Debt)
   const loading = ref(false)
-  const error = ref<any>(null)
+  const error = ref<Error | null>(null)
   const loaded = ref(false)
 
   async function getDebt() {
@@ -14,7 +14,7 @@ export default function useDebt(debtId?: number, { disableFetch = false }: { dis
       const data = await $fetch<Debt>(`/api/get/debts/${debtId}`)
       debt.value = data
     } catch (err) {
-      error.value = err
+      error.value = err instanceof Error ? err : new Error('Failed to fetch debt')
     } finally {
       loading.value = false
       loaded.value = true
@@ -37,8 +37,9 @@ export default function useDebt(debtId?: number, { disableFetch = false }: { dis
         body: { ...debtPayload, user_id: user.value.id },
       })
     } catch (err) {
-      error.value = err
-      throw err
+      const errorValue = err instanceof Error ? err : new Error('Failed to add debt')
+      error.value = errorValue
+      throw errorValue
     } finally {
       loading.value = false
     }
@@ -51,8 +52,9 @@ export default function useDebt(debtId?: number, { disableFetch = false }: { dis
     try {
       await $fetch(`/api/patch/debts/${debtId}`, { method: 'PATCH', body: debtPayload })
     } catch (err) {
-      error.value = err
-      throw err
+      const errorValue = err instanceof Error ? err : new Error('Failed to update debt')
+      error.value = errorValue
+      throw errorValue
     } finally {
       loading.value = false
     }
@@ -65,8 +67,9 @@ export default function useDebt(debtId?: number, { disableFetch = false }: { dis
     try {
       await $fetch(`/api/delete/debts/${debtId}`, { method: 'DELETE' })
     } catch (err) {
-      error.value = err
-      throw err
+      const errorValue = err instanceof Error ? err : new Error('Failed to remove debt')
+      error.value = errorValue
+      throw errorValue
     } finally {
       loading.value = false
     }

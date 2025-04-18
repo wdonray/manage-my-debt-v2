@@ -4,7 +4,7 @@ export default function useDebts({ disableFetch = false }: { disableFetch?: bool
   const { user } = useAuth()
   const debts = useState<Debt[]>('debts', () => [])
   const loading = ref(false)
-  const error = ref<any>(null)
+  const error = ref<Error | null>(null)
   const loaded = ref(false)
 
   async function fetchDebts() {
@@ -17,7 +17,7 @@ export default function useDebts({ disableFetch = false }: { disableFetch?: bool
       const data = await $fetch<Debt[]>(`/api/get/debts/user/${user.value.id}`)
       debts.value = data
     } catch (err) {
-      error.value = err
+      error.value = err instanceof Error ? err : new Error('Failed to fetch debts')
     } finally {
       loading.value = false
       loaded.value = true

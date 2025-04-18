@@ -19,7 +19,7 @@
         </Notice>
 
         <Card v-else-if="profile" border>
-          <Flex stack gap="md" v-auto-animate>
+          <Flex v-auto-animate stack gap="md">
             <FormWithValidation @submit="saveProfile">
               <Flex stack gap="md">
                 <FieldText v-model="formData.email" label="Email" readonly />
@@ -62,7 +62,7 @@ import type { ProfileUpdatePayload } from '~/types/database'
 const { profile, loading, error, updateProfile } = useProfile()
 
 const formData = ref<ProfileUpdatePayload>({})
-const saveError = ref<any>(null)
+const saveError = ref<Error | null>(null)
 const saveSuccess = ref(false)
 
 useForm(profile, formData)
@@ -77,7 +77,7 @@ async function saveProfile() {
     setTimeout(() => (saveSuccess.value = false), 3000)
   } catch (err) {
     console.error('Error saving profile in component:', err)
-    saveError.value = err
+    saveError.value = err instanceof Error ? err : new Error('Failed to save profile')
   }
 }
 </script>

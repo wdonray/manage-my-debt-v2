@@ -4,19 +4,19 @@
       <div class="carousel-overlay" />
 
       <motion.div :initial="false" :animate="carouselAnimation" class="carousel-track">
-        <div v-for="item in items" class="carousel-item" :key="item">
-          <img :src="item" :alt="item" loading="eager" />
+        <div v-for="item in items" :key="item" class="carousel-item">
+          <img :src="item" :alt="item" loading="eager" >
         </div>
       </motion.div>
 
       <div class="carousel-bullets">
         <motion.div
           v-for="(item, index) in items"
-          class="carousel-bullet"
           :key="item"
+          class="carousel-bullet"
           :class="{ active: currentIndex === index }"
-          @click="currentIndex = index"
           :animate="animateBullets(index)"
+          @click="currentIndex = index"
         />
       </div>
     </div>

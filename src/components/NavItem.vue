@@ -17,15 +17,13 @@ const active = computed(() => useRoute().path === props.to)
 
 <style>
 .light {
-  --color-nav-item-active: var(--color-purple-500);
-  --color-nav-item-hover: var(--color-gray-100);
-  --color-nav-item-text: var(--color-white);
+  --color-nav-item-hover: var(--color-gray-600);
+  --color-nav-item-text: var(--color-gray-100);
 }
 
 .dark {
-  --color-nav-item-active: var(--color-purple-400);
-  --color-nav-item-hover: var(--color-gray-300);
-  --color-nav-item-text: var(--color-white);
+  --color-nav-item-hover: var(--color-gray-700);
+  --color-nav-item-text: var(--color-gray-50);
 }
 </style>
 
@@ -39,12 +37,12 @@ const active = computed(() => useRoute().path === props.to)
   text-decoration: none;
   transition: all 0.2s ease;
   font-size: 0.875rem;
+  color: var(--color-nav-item-text);
 }
 
 .nav-item.active {
   font-weight: 500;
-  background-color: var(--color-nav-item-active);
-  color: var(--color-nav-item-text);
+  background-color: var(--color-accent);
 }
 
 .nav-item:hover:not(.active) {

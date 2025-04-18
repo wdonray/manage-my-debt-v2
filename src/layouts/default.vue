@@ -1,5 +1,5 @@
 <template>
-  <div class="layout" v-if="mounted">
+  <div v-if="mounted" class="layout">
     <Sidebar />
 
     <Header />
@@ -19,6 +19,12 @@ onMounted(() => {
 })
 </script>
 
+<style>
+:root {
+  --sidebar-width: 215px;
+}
+</style>
+
 <style scoped>
 .layout {
   display: flex;
@@ -29,10 +35,9 @@ onMounted(() => {
 
 .main-content {
   flex: 1;
-  margin-left: 250px;
+  margin-left: var(--sidebar-width);
   padding: var(--spacing-md);
   padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
-  background: var(--color-background);
   display: flex;
   flex-direction: column;
 }

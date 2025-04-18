@@ -2,8 +2,8 @@
   <Button
     class="btn-text"
     style="color: var(--appearance-toggle-color)"
-    @click="toggleColorMode"
     :aria-label="colorMode.preference === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+    @click="toggleColorMode"
   >
     <Icon :name="appearanceIconName" size="24" aria-hidden="true" />
   </Button>

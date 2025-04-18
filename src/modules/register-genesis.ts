@@ -24,6 +24,7 @@ export default defineNuxtModule({
       'FormWithValidation',
       'Grid',
       'Notice',
+      'Sheet',
       'Skeleton',
       'Tooltip',
     ])

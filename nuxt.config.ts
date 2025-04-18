@@ -1,6 +1,6 @@
 import { nuxtDoctrineConfig } from '@christfirst/doctrine'
 
-// @ts-ignore
+// @ts-expect-error - This is a workaround for the fact that the nuxtDoctrineConfig is not typed
 export default defineNuxtConfig({
   ...nuxtDoctrineConfig,
   css: ['~/assets/css/transitions.css', ...nuxtDoctrineConfig.css],
@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     '@nuxt/scripts',
     '@nuxt/fonts',
+    '@nuxt/eslint',
     ...nuxtDoctrineConfig.modules,
   ],
   icon: {

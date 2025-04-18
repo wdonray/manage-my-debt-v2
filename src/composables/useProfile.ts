@@ -6,7 +6,7 @@ export default function useProfile() {
   const { user } = useAuth()
   const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
   const loading = ref(false)
-  const error = ref<any>(null)
+  const error = ref<Error | null>(null)
 
   const loaded = computed(() => Object.keys(profile.value).length > 0)
 
@@ -20,7 +20,7 @@ export default function useProfile() {
       const data = await $fetch(`/api/get/profiles/${user.value.id}`)
       profile.value = data
     } catch (err) {
-      error.value = err
+      error.value = err instanceof Error ? err : new Error('Failed to fetch profile')
       profile.value = {} as Profile
     } finally {
       loading.value = false
@@ -37,8 +37,9 @@ export default function useProfile() {
       const data = await $fetch(`/api/patch/profiles/${user.value.id}`, { method: 'PATCH', body: profilePayload })
       profile.value = data
     } catch (err) {
-      error.value = err
-      throw err
+      const errorValue = err instanceof Error ? err : new Error('Failed to update profile')
+      error.value = errorValue
+      throw errorValue
     } finally {
       loading.value = false
     }
