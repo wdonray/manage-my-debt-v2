@@ -69,6 +69,7 @@ function toggleSection() {
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 500;
+  color: var(--color-nav-item-text);
 }
 
 button:not(:disabled):active {

@@ -18,11 +18,13 @@ const active = computed(() => useRoute().path === props.to)
 <style>
 .light {
   --color-nav-item-hover: var(--color-gray-600);
+  --color-nav-item-active: var(--color-blue-500);
   --color-nav-item-text: var(--color-gray-100);
 }
 
 .dark {
   --color-nav-item-hover: var(--color-gray-700);
+  --color-nav-item-active: var(--color-blue-500);
   --color-nav-item-text: var(--color-gray-50);
 }
 </style>
@@ -42,7 +44,7 @@ const active = computed(() => useRoute().path === props.to)
 
 .nav-item.active {
   font-weight: 500;
-  background-color: var(--color-accent);
+  background-color: var(--color-nav-item-active);
 }
 
 .nav-item:hover:not(.active) {

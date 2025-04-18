@@ -33,7 +33,7 @@
                   placeholder="https://yourwebsite.com"
                 />
 
-                <Flex style="justify-content: flex-end">
+                <Flex justify="flex-end">
                   <Button class="btn-primary" type="submit" :disabled="loading">
                     {{ loading ? 'Saving...' : 'Save Profile' }}
                   </Button>

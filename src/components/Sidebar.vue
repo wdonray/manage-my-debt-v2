@@ -1,15 +1,11 @@
 <template>
   <div class="sidebar-container">
     <aside v-if="!mobile" class="sidebar">
-      <div class="sidebar-header">
+      <Flex align="center" justify="center" class="sidebar-header">
         <NuxtLink to="/" class="header-link">
           <span>Manage My Debt</span>
         </NuxtLink>
-
-        <FlexSpace />
-
-        <AppearanceToggle />
-      </div>
+      </Flex>
 
       <nav class="sidebar-nav">
         <NavGroup title="Debts" icon="ph:credit-card">
@@ -36,11 +32,13 @@ const { mobile } = useBreakpoint()
 .light {
   --color-sidebar-background: var(--color-gray-900);
   --color-sidebar-text: var(--color-gray-300);
+  --color-header-background: var(--color-gray-900);
 }
 
 .dark {
   --color-sidebar-background: var(--color-gray-800);
   --color-sidebar-text: var(--color-white);
+  --color-header-background: var(--color-gray-800);
 }
 </style>
 
@@ -69,10 +67,6 @@ const { mobile } = useBreakpoint()
   margin-bottom: var(--spacing-lg);
   font-weight: 600;
   font-size: var(--text-h3);
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: var(--spacing-sm);
 }
 
 .sidebar-nav {

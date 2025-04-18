@@ -3,26 +3,24 @@
     <Flex align="baseline" style="padding: 0 var(--spacing-md)">
       <FlexSpace />
 
-      <Avatar v-if="!mobile" />
+      <Flex v-if="!mobile" align="center">
+        <AppearanceToggle />
+        <Avatar />
+      </Flex>
 
       <template v-else>
         <Sheet v-model="isDrawerOpen">
-          <Flex>
-            <FlexSpace />
-            <Avatar />
-          </Flex>
-
-          <NavGroup title="Debts" icon="ph:credit-card">
+          <Flex stack>
             <NavItem to="/debts" icon="ph:list" label="My Debts" />
             <NavItem to="/debts/new" icon="ph:plus-circle" label="Add Debt" />
-          </NavGroup>
 
-          <NavItem to="/payment-schedule" icon="ph:calendar" label="Payment Schedule" />
-          <NavItem to="/goals" icon="ph:trophy" label="Goals" />
-          <FlexSpace />
-          <NavItem to="/help" icon="ph:question" label="Help" />
-          <NavItem to="/profile" icon="ph:user" label="Profile" />
-          <NavItem to="/logout" icon="ph:sign-out" label="Sign Out" />
+            <NavItem to="/payment-schedule" icon="ph:calendar" label="Payment Schedule" />
+            <NavItem to="/goals" icon="ph:trophy" label="Goals" />
+            <FlexSpace />
+            <NavItem to="/help" icon="ph:question" label="Help" />
+            <NavItem to="/profile" icon="ph:user" label="Profile" />
+            <NavItem to="/logout" icon="ph:sign-out" label="Sign Out" />
+          </Flex>
         </Sheet>
 
         <AppearanceToggle />

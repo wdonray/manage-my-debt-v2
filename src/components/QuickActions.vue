@@ -22,7 +22,7 @@ const actions = [
     subtitle: 'Record a new liability',
     to: '/debts/new',
     ariaLabel: 'Add a new debt to track',
-    color: 'var(--color-accent)',
+    color: 'var(--color-notice-green)',
   },
   {
     icon: 'ph:calendar',
@@ -30,7 +30,7 @@ const actions = [
     subtitle: 'View upcoming payments',
     to: '/calendar',
     ariaLabel: 'View your debt payment schedule',
-    color: 'var(--color-purple-300)',
+    color: 'var(--color-notice-blue)',
   },
   {
     icon: 'ph:trophy',
@@ -38,7 +38,7 @@ const actions = [
     subtitle: 'Track your milestones',
     to: '/goals',
     ariaLabel: 'View and manage your debt payoff goals',
-    color: 'var(--color-purple-500)',
+    color: 'var(--color-notice-yellow)',
   },
 ]
 </script>

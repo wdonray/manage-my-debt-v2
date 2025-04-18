@@ -97,7 +97,7 @@
             />
           </section>
 
-          <Flex style="justify-content: space-between; margin-top: var(--spacing-xl)">
+          <Flex justify="space-between" style="padding-inline: var(--spacing-xl); padding-bottom: var(--spacing-xl)">
             <Button class="btn-outline" type="button" @click="cancel">
               <Flex align="center" gap="sm">
                 <Icon v-if="currentStep === steps.BASIC_INFO" name="ph:x" size="20" />
@@ -120,13 +120,13 @@
 
     <Flex v-auto-animate stack>
       <div>
-        <Card :shadow="false" class="preview-card">
+        <Card :shadow="false" border class="preview-card">
           <h3 class="preview-title">
-            <Icon name="ph:eye" size="24" class="preview-icon" />
+            <Icon name="ph:receipt" size="24" class="preview-icon" />
             Liability Preview
           </h3>
 
-          <hr class="preview-divider" >
+          <hr class="preview-divider" />
 
           <Flex v-auto-animate stack gap="xl">
             <!-- Name is optional -->
@@ -279,6 +279,16 @@ function cancel() {
 }
 </script>
 
+<style>
+.light {
+  --color-preview-card-background: var(--color-gray-50);
+}
+
+.dark {
+  --color-preview-card-background: var(--color-gray-800);
+}
+</style>
+
 <style scoped>
 .form-card {
   transition: all 0.3s ease;
@@ -286,6 +296,7 @@ function cancel() {
 
 .form-section {
   animation: fadeIn 0.3s ease;
+  padding: var(--spacing-xl);
 }
 
 .section-title {
@@ -300,12 +311,11 @@ function cancel() {
   color: var(--color-accent);
 }
 
-.preview-card {
+:deep(.preview-card.card.border) {
   position: sticky;
   top: var(--spacing-xl);
-  background: var(--color-background);
-  border: 1px solid var(--color-border);
   transition: all 0.3s ease;
+  background-color: var(--color-preview-card-background);
 }
 
 .preview-title {
@@ -345,16 +355,6 @@ function cancel() {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-/* Dark mode enhancements */
-:root[class='dark'] .preview-card {
-  background: var(--color-background);
-  border-color: var(--color-border);
-}
-
-:root[class='dark'] .preview-item:hover {
-  background-color: var(--color-background-hover);
 }
 
 .status-badge {

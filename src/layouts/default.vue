@@ -21,7 +21,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --sidebar-width: 215px;
+  --sidebar-width: 210px;
 }
 </style>
 
@@ -37,6 +37,7 @@ onMounted(() => {
   flex: 1;
   margin-left: var(--sidebar-width);
   padding: var(--spacing-md);
+  padding-left: var(--spacing-2xl);
   padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;

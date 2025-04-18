@@ -38,15 +38,15 @@
     <Flex stack gap="xl">
       <section class="debt-summary">
         <Grid columns="1fr 1fr 1fr" gap="md">
-          <DashboardCard icon="ph:money" title="Total Debt" color="var(--color-purple-400)">
+          <DashboardCard icon="ph:money" title="Total Debt" color="var(--color-notice-blue)">
             <h2>{{ formatCurrency(totalDebt) }}</h2>
           </DashboardCard>
 
-          <DashboardCard icon="ph:calendar-check" title="Monthly Payments" color="var(--color-blue-400)">
+          <DashboardCard icon="ph:calendar-check" title="Monthly Payments" color="var(--color-notice-blue)">
             <h2>{{ formatCurrency(totalMonthlyPayments) }}</h2>
           </DashboardCard>
 
-          <DashboardCard icon="ph:rocket" title="Extra Payment" color="var(--color-green-400)">
+          <DashboardCard icon="ph:rocket" title="Extra Payment" color="var(--color-notice-blue)">
             <h2>{{ formatCurrency(totalExtraPayment) }}</h2>
           </DashboardCard>
         </Grid>
@@ -54,10 +54,10 @@
 
       <section class="debt-overview">
         <Grid columns="1fr 1fr" gap="md">
-          <DashboardCard color="var(--color-red-400)">
+          <DashboardCard color="var(--color-notice-green)">
             <template #title>
               <Flex align="center" gap="sm">
-                <Icon name="ph:target" size="24" style="color: var(--color-red-400)" />
+                <Icon name="ph:target" size="24" style="color: var(--color-notice-green)" />
                 <h3 style="margin: 0">Priority Debt</h3>
                 <small class="text-secondary">(Highest APR)</small>
               </Flex>
@@ -85,10 +85,10 @@
             <p v-else class="text-secondary">No debts found</p>
           </DashboardCard>
 
-          <DashboardCard color="var(--color-purple-500)">
+          <DashboardCard color="var(--color-notice-green)">
             <template #title>
               <Flex align="center" gap="sm">
-                <Icon name="ph:chart-line-up" size="24" style="color: var(--color-purple-500)" />
+                <Icon name="ph:chart-line-up" size="24" style="color: var(--color-notice-green)" />
                 <h3 style="margin: 0">Debt Overview</h3>
               </Flex>
             </template>
@@ -122,13 +122,13 @@
           <h3 style="margin: 0">Next Priority Debts</h3>
         </Flex>
         <Grid columns="1fr 1fr" gap="md">
-          <DashboardCard v-for="(debt, index) in nextDebts" :key="debt.id" color="var(--color-yellow-500)">
+          <DashboardCard v-for="(debt, index) in nextDebts" :key="debt.id" color="var(--color-notice-green)">
             <template #title>
               <Flex align="center" gap="sm">
                 <Icon
                   :name="index === 0 ? 'ph:number-circle-one' : 'ph:number-circle-two'"
                   size="24"
-                  color="var(--color-yellow-500)"
+                  color="var(--color-notice-green)"
                 />
                 <span class="text-secondary">Name</span>
               </Flex>
