@@ -4,6 +4,7 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
   const { user } = useAuth()
   const debt = ref<Debt>({} as Debt)
   const loading = ref(false)
+  const saving = ref(false)
   const error = ref<Error | null>(null)
   const loaded = ref(false)
 
@@ -28,7 +29,7 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
   async function addDebt(debtPayload: DebtCreatePayload) {
     if (!user.value?.id) return
 
-    loading.value = true
+    saving.value = true
     error.value = null
 
     try {
@@ -41,12 +42,12 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
       error.value = errorValue
       throw errorValue
     } finally {
-      loading.value = false
+      saving.value = false
     }
   }
 
   async function updateDebt(debtPayload: DebtUpdatePayload) {
-    loading.value = true
+    saving.value = true
     error.value = null
 
     try {
@@ -56,13 +57,13 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
       error.value = errorValue
       throw errorValue
     } finally {
-      loading.value = false
+      saving.value = false
     }
   }
 
   async function removeDebt() {
     if (!confirm('Are you sure you want to delete this debt?')) return
-    loading.value = true
+    saving.value = true
     error.value = null
     try {
       await $fetch(`/api/delete/debts/${debtId}`, { method: 'DELETE' })
@@ -71,7 +72,7 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
       error.value = errorValue
       throw errorValue
     } finally {
-      loading.value = false
+      saving.value = false
     }
   }
 
@@ -83,6 +84,7 @@ export default function useDebt(debtId?: string, { disableFetch = false }: { dis
     loaded,
     loading,
     removeDebt,
+    saving,
     updateDebt,
   }
 }

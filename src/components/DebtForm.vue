@@ -5,8 +5,12 @@
         <Flex v-auto-animate stack>
           <section v-if="currentStep === steps.BASIC_INFO" v-auto-animate class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:info-bold" size="24" class="section-icon" />
-              Basic Debt Details
+              <Flex align="center" gap="sm" style="width: 100%">
+                <Icon name="ph:info-bold" size="24" class="section-icon" />
+                <span>Basic Debt Details</span>
+                <FlexSpace />
+                <FormStatus :unsaved :show-status :saving class="form-status" />
+              </Flex>
             </h3>
             <FieldText
               v-model="formData.name"
@@ -35,8 +39,12 @@
 
           <section v-else-if="currentStep === steps.PAYMENT_DETAILS" class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:chart-line-up-bold" size="24" class="section-icon" />
-              Payment Plan
+              <Flex align="center" gap="sm" style="width: 100%">
+                <Icon name="ph:chart-line-up-bold" size="24" class="section-icon" />
+                <span>Payment Plan</span>
+                <FlexSpace />
+                <FormStatus :unsaved :show-status :saving class="form-status" />
+              </Flex>
             </h3>
             <FieldCurrency
               v-model="formData.min_payment"
@@ -73,8 +81,12 @@
 
           <section v-else-if="currentStep === steps.ADDITIONAL_SETTINGS" class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:sliders-bold" size="24" class="section-icon" />
-              Advanced Settings
+              <Flex align="center" gap="sm" style="width: 100%">
+                <Icon name="ph:sliders-bold" size="24" class="section-icon" />
+                <span>Advanced Settings</span>
+                <FlexSpace />
+                <FormStatus :unsaved :show-status :saving class="form-status" />
+              </Flex>
             </h3>
             <FieldSelect
               v-model="formData.status"
@@ -227,9 +239,9 @@ const statusOptions = [
   { key: 'closed', display: 'Closed' },
 ]
 
-const { addDebt, updateDebt, debt, loading } = useDebt(props.id, { disableFetch: !editing })
+const { addDebt, updateDebt, debt, loading, saving } = useDebt(props.id, { disableFetch: !editing })
 
-useForm(debt, formData)
+const { unsaved, showStatus, setUnsaved } = useForm(debt, formData)
 
 const render = computed(() => {
   if (!editing) return true
@@ -258,6 +270,7 @@ async function submit() {
     } else {
       await addDebt(formData.value as DebtCreatePayload)
     }
+    setUnsaved(false)
     router.back()
     return
   }

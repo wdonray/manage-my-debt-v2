@@ -31,7 +31,7 @@
       <Flex stack gap="sm">
         <strong>Minimum Payment Alert</strong>
         <span>
-          Your minimum payment is less than {{ formatPercentage(MIN_PAYMENT_THRESHOLD) }} of your balance ({{
+          Your minimum payment is less than {{ MIN_PAYMENT_PERCENTAGE }}% of your balance ({{
             balance ? formatCurrency(calculateRecommendedMinPayment(balance)) : '$0.00'
           }}
           recommended). Consider increasing your minimum payment to avoid prolonged debt repayment.
@@ -103,7 +103,7 @@ const showLargeBalanceAlert = computed(
 
 const showMinPaymentAlert = computed(() => {
   const balance = Number(debouncedValues.value.balance || 0)
-  const minPayment = Number(debouncedValues.value.minPayment || 0)
+  const minPayment = Number(debouncedValues.value.minPayment || 0) + Number(debouncedValues.value.extraPayment || 0)
   return isMinPaymentTooLow(balance, minPayment)
 })
 
