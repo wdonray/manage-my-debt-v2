@@ -5,16 +5,16 @@
         <Flex v-auto-animate stack>
           <section v-if="currentStep === steps.BASIC_INFO" v-auto-animate class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:info" size="24" class="section-icon" />
-              Debt Information
+              <Icon name="ph:info-bold" size="24" class="section-icon" />
+              Basic Debt Details
             </h3>
             <FieldText
               v-model="formData.name"
-              label="Name"
+              label="Debt Name"
               name="name"
               optional
-              placeholder="e.g., Chase Freedom Card"
-              description="A memorable name to identify this debt in your avalanche strategy"
+              placeholder="e.g., Credit Card, Student Loan, Car Loan"
+              description="Give this debt a recognizable name to track it in your avalanche strategy"
               :fetching="loading"
             />
             <FieldCurrency
@@ -22,61 +22,61 @@
               label="Current Balance *"
               name="balance"
               validations="required|min_value:1"
-              description="The outstanding balance you currently owe. This amount will help calculate total interest savings"
+              description="The total amount you currently owe. This helps determine your debt payoff timeline"
               :fetching="loading"
             />
             <FieldPercentage
               v-model="formData.apr"
-              label="APR (%) *"
+              label="Interest Rate (APR) *"
               name="apr"
               validations="required|min_value:0"
-              description="Annual Percentage Rate - Using the debt avalanche method, we'll prioritize paying off high-APR debts first to minimize interest"
+              description="Annual Percentage Rate - The avalanche method targets high-interest debts first to minimize interest costs"
               :fetching="loading"
             />
           </section>
 
           <section v-else-if="currentStep === steps.PAYMENT_DETAILS" class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:currency-circle-dollar" size="24" class="section-icon" />
-              Payment Strategy
+              <Icon name="ph:chart-line-up-bold" size="24" class="section-icon" />
+              Payment Plan
             </h3>
             <FieldCurrency
               v-model="formData.min_payment"
-              label="Minimum Payment *"
+              label="Required Monthly Payment *"
               name="min_payment"
               validations="required|min_value:1"
-              description="The minimum monthly payment required. You'll continue making minimum payments on all debts while focusing extra funds on high-APR debt"
+              description="The minimum amount due each month. The avalanche method requires keeping all minimum payments current"
             />
             <FieldCurrency
               v-model="formData.extra_payment"
-              label="Extra Payment"
+              label="Extra Monthly Payment"
               name="extra_payment"
               optional
               validations="min_value:0"
-              description="Additional amount above minimum. In the avalanche method, all extra money goes toward the highest-APR debt first"
+              description="Additional amount you can put toward this debt. The avalanche method will direct extra payments to your highest-interest debt"
             />
             <FieldText
               v-model="formData.start_date"
-              label="Start Date"
+              label="Tracking Start Date"
               type="date"
               name="start_date"
               optional
-              description="When you began tracking this debt. Used to measure your progress over time"
+              description="When you started tracking this debt. Helps visualize your progress over time"
             />
             <FieldText
               v-model="formData.due_date"
-              label="Payment Due Date"
+              label="Monthly Due Date"
               type="date"
               name="due_date"
               optional
-              description="Monthly due date. Important to maintain minimum payments on all debts while following the avalanche strategy"
+              description="When your payment is due each month. Important for maintaining on-time payments across all debts"
             />
           </section>
 
           <section v-else-if="currentStep === steps.ADDITIONAL_SETTINGS" class="form-section">
             <h3 class="section-title">
-              <Icon name="ph:gear" size="24" class="section-icon" />
-              Additional Settings
+              <Icon name="ph:sliders-bold" size="24" class="section-icon" />
+              Advanced Settings
             </h3>
             <FieldSelect
               v-model="formData.status"
@@ -84,33 +84,33 @@
               :options="statusOptions"
               name="status"
               optional
-              description="Track if payments are on schedule. Staying current on all minimum payments is crucial for the avalanche method"
+              description="Track if this debt is current or needs attention. The avalanche method works best when all payments are up-to-date"
             />
             <FieldText
               v-model="formData.priority_order"
               type="number"
-              label="Custom Priority"
+              label="Custom Priority Override"
               name="priority_order"
               optional
               validations="min_value:0"
-              description="Optional: Override the automatic highest-APR-first ordering. Note: Following the avalanche method's APR ordering maximizes interest savings"
+              description="Override the automatic highest-interest-first ordering. Note: Following the standard avalanche method maximizes your interest savings"
             />
           </section>
 
-          <Flex justify="space-between" style="padding-inline: var(--spacing-xl); padding-bottom: var(--spacing-xl)">
+          <Flex justify="space-between" class="form-actions">
             <Button class="btn-outline" type="button" @click="cancel">
               <Flex align="center" gap="sm">
-                <Icon v-if="currentStep === steps.BASIC_INFO" name="ph:x" size="20" />
-                <Icon v-else name="ph:arrow-left" size="20" />
-                {{ currentStep === steps.BASIC_INFO ? 'Cancel' : 'Back' }}
+                <Icon v-if="currentStep === steps.BASIC_INFO" name="ph:x-bold" size="20" />
+                <Icon v-else name="ph:arrow-left-bold" size="20" />
+                {{ currentStep === steps.BASIC_INFO ? 'Cancel' : 'Previous' }}
               </Flex>
             </Button>
 
             <Button class="btn-primary" type="submit" :disabled="loading">
               <Flex align="center" gap="sm">
-                {{ currentStep === steps.ADDITIONAL_SETTINGS ? 'Save' : 'Next' }}
-                <Icon v-if="currentStep !== steps.ADDITIONAL_SETTINGS" name="ph:arrow-right" size="20" />
-                <Icon v-else name="ph:check" size="20" />
+                {{ currentStep === steps.ADDITIONAL_SETTINGS ? 'Save Debt' : 'Continue' }}
+                <Icon v-if="currentStep !== steps.ADDITIONAL_SETTINGS" name="ph:arrow-right-bold" size="20" />
+                <Icon v-else name="ph:check-bold" size="20" />
               </Flex>
             </Button>
           </Flex>
@@ -122,63 +122,57 @@
       <div>
         <Card :shadow="false" border class="preview-card">
           <h3 class="preview-title">
-            <Icon name="ph:receipt" size="24" class="preview-icon" />
-            Liability Preview
+            <Icon name="ph:calculator-bold" size="24" class="preview-icon" />
+            Debt Summary
           </h3>
 
           <hr class="preview-divider" />
 
           <Flex v-auto-animate stack gap="xl">
-            <!-- Name is optional -->
             <Flex v-if="formData.name" class="preview-item">
-              <strong>Name</strong>
+              <strong>Debt Name</strong>
               <FlexSpace />
               <span>{{ formData.name }}</span>
             </Flex>
 
-            <!-- Balance is required -->
             <Flex class="preview-item">
               <strong>Balance</strong>
               <FlexSpace />
-              <span>{{ formData.balance ? formatCurrency(formData.balance) : 'Not Set' }}</span>
+              <span>{{ formData.balance ? formatCurrency(formData.balance) : '—' }}</span>
             </Flex>
 
-            <!-- APR is required -->
             <Flex class="preview-item">
-              <strong>APR</strong>
+              <strong>Interest Rate</strong>
               <FlexSpace />
-              <span>{{ formatPercentage(formData.apr) }}</span>
+              <span :class="{ 'high-interest': isHighInterest(Number(formData.apr || 0)) }">
+                {{ formatPercentage(formData.apr) }}
+              </span>
             </Flex>
 
-            <!-- Minimum Payment is required -->
             <Flex class="preview-item">
-              <strong>Minimum Payment</strong>
+              <strong>Monthly Payment</strong>
               <FlexSpace />
-              <span>{{ formData.min_payment ? formatCurrency(formData.min_payment) : 'Not Set' }}</span>
+              <span>{{ formData.min_payment ? formatCurrency(formData.min_payment) : '—' }}</span>
             </Flex>
 
-            <!-- Extra Payment is optional -->
-            <Flex v-if="formData.extra_payment" class="preview-item">
+            <Flex v-if="formData.extra_payment" class="preview-item highlight-extra">
               <strong>Extra Payment</strong>
               <FlexSpace />
-              <span>{{ formatCurrency(formData.extra_payment) }}</span>
+              <span class="extra-payment">+{{ formatCurrency(formData.extra_payment) }}</span>
             </Flex>
 
-            <!-- Start Date is optional -->
             <Flex v-if="formData.start_date" class="preview-item">
-              <strong>Start Date</strong>
+              <strong>Started Tracking</strong>
               <FlexSpace />
               <span>{{ formatDate(formData.start_date) }}</span>
             </Flex>
 
-            <!-- Due Date is optional -->
             <Flex v-if="formData.due_date" class="preview-item">
-              <strong>Due Date</strong>
+              <strong>Payment Due</strong>
               <FlexSpace />
               <span>{{ formatDate(formData.due_date) }}</span>
             </Flex>
 
-            <!-- Status is optional -->
             <Flex v-if="formData.status" class="preview-item">
               <strong>Status</strong>
               <FlexSpace />
@@ -187,11 +181,10 @@
               </span>
             </Flex>
 
-            <!-- Priority Order is optional -->
             <Flex v-if="formData.priority_order" class="preview-item">
-              <strong>Priority Order</strong>
+              <strong>Custom Priority</strong>
               <FlexSpace />
-              <span>{{ formData.priority_order }}</span>
+              <span class="priority-order">#{{ formData.priority_order }}</span>
             </Flex>
           </Flex>
         </Card>
@@ -260,7 +253,7 @@ async function submit() {
     } else {
       await addDebt(formData.value as DebtCreatePayload)
     }
-    router.push('/debts')
+    router.back()
     return
   }
 
@@ -282,10 +275,14 @@ function cancel() {
 <style>
 .light {
   --color-preview-card-background: var(--color-gray-50);
+  --color-high-interest: var(--color-notice-red-text);
+  --color-extra-payment: var(--color-notice-green-text);
 }
 
 .dark {
   --color-preview-card-background: var(--color-gray-800);
+  --color-high-interest: var(--color-notice-red-text);
+  --color-extra-payment: var(--color-notice-green-text);
 }
 </style>
 
@@ -305,10 +302,16 @@ function cancel() {
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-xl);
   color: var(--color-text-primary);
+  font-size: var(--text-h3);
 }
 
 .section-icon {
   color: var(--color-accent);
+}
+
+.form-actions {
+  padding: var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
 }
 
 :deep(.preview-card.card.border) {
@@ -324,6 +327,7 @@ function cancel() {
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   color: var(--color-text-primary);
+  font-size: var(--text-h3);
 }
 
 .preview-icon {
@@ -339,11 +343,30 @@ function cancel() {
 .preview-item {
   padding: var(--spacing-sm);
   border-radius: var(--radius-sm);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .preview-item:hover {
   background-color: var(--color-background-hover);
+}
+
+.preview-item strong {
+  color: var(--color-text-secondary);
+}
+
+.high-interest {
+  color: var(--color-high-interest);
+  font-weight: 600;
+}
+
+.extra-payment {
+  color: var(--color-extra-payment);
+  font-weight: 600;
+}
+
+.priority-order {
+  font-weight: 600;
+  color: var(--color-accent);
 }
 
 @keyframes fadeIn {
@@ -360,7 +383,7 @@ function cancel() {
 .status-badge {
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+  font-size: var(--text-small);
   font-weight: 500;
 }
 

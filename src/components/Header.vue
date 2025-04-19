@@ -3,23 +3,19 @@
     <Flex align="baseline" style="padding: 0 var(--spacing-md)">
       <FlexSpace />
 
-      <Flex v-if="!mobile" align="center">
-        <AppearanceToggle />
-        <Avatar />
-      </Flex>
+      <AppearanceToggle v-if="!mobile" />
 
       <template v-else>
         <Sheet v-model="isDrawerOpen">
           <Flex stack>
-            <NavItem to="/debts" icon="ph:list" label="My Debts" />
-            <NavItem to="/debts/new" icon="ph:plus-circle" label="Add Debt" />
-
-            <NavItem to="/payment-schedule" icon="ph:calendar" label="Payment Schedule" />
-            <NavItem to="/goals" icon="ph:trophy" label="Goals" />
+            <NavItem to="/debts" icon="ph:notebook-bold" label="View All Debts" />
+            <NavItem to="/debts/new" icon="ph:plus-circle-bold" label="Add New Debt" />
+            <NavItem to="/payment-schedule" icon="ph:calendar-bold" label="Payment Schedule" />
+            <NavItem to="/goals" icon="ph:target-bold" label="Financial Goals" />
             <FlexSpace />
-            <NavItem to="/help" icon="ph:question" label="Help" />
-            <NavItem to="/profile" icon="ph:user" label="Profile" />
-            <NavItem to="/logout" icon="ph:sign-out" label="Sign Out" />
+            <NavItem to="/help" icon="ph:question-bold" label="Get Help" />
+            <NavItem to="/profile" icon="ph:user-gear-bold" label="Settings" />
+            <NavItem to="/logout" icon="ph:sign-out-bold" label="Sign Out" class="logout-item" />
           </Flex>
         </Sheet>
 
@@ -52,5 +48,9 @@ header {
 
 .mobile-toggle {
   z-index: 101;
+}
+
+.logout-item {
+  color: var(--color-notice-red-text);
 }
 </style>

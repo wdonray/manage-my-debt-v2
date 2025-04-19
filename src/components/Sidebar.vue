@@ -3,22 +3,28 @@
     <aside v-if="!mobile" class="sidebar">
       <Flex align="center" justify="center" class="sidebar-header">
         <NuxtLink to="/" class="header-link">
+          <Icon name="ph:wallet-bold" size="24" />
           <span>Manage My Debt</span>
         </NuxtLink>
       </Flex>
 
       <nav class="sidebar-nav">
-        <NavGroup title="Debts" icon="ph:credit-card">
-          <NavItem to="/debts" icon="ph:list" label="My Debts" />
-          <NavItem to="/debts/new" icon="ph:plus-circle" label="Add Debt" />
-        </NavGroup>
+        <NavItem to="/debts" icon="ph:notebook-bold" label="View All Debts" />
+        <NavItem to="/debts/new" icon="ph:plus-circle-bold" label="Add New Debt" />
 
-        <NavItem to="/payment-schedule" icon="ph:calendar" label="Payment Schedule" />
-        <NavItem to="/goals" icon="ph:trophy" label="Goals" />
+        <NavItem to="/payment-schedule" icon="ph:calendar-bold" label="Payment Schedule" />
+        <NavItem to="/goals" icon="ph:target-bold" label="Financial Goals" />
+
         <FlexSpace />
-        <NavItem to="/help" icon="ph:question" label="Help" />
-        <NavItem to="/profile" icon="ph:user" label="Profile" />
-        <NavItem to="/logout" icon="ph:sign-out" label="Sign Out" />
+
+        <NavGroup title="Account" reverse>
+          <template #icon>
+            <Avatar size="32" />
+          </template>
+          <NavItem to="/help" icon="ph:question-bold" label="Get Help" />
+          <NavItem to="/profile" icon="ph:user-gear-bold" label="Settings" />
+          <NavItem to="/logout" icon="ph:sign-out-bold" label="Sign Out" class="logout-item" />
+        </NavGroup>
       </nav>
     </aside>
   </div>
@@ -33,12 +39,16 @@ const { mobile } = useBreakpoint()
   --color-sidebar-background: var(--color-gray-900);
   --color-sidebar-text: var(--color-gray-300);
   --color-header-background: var(--color-gray-900);
+  --color-sidebar-hover: var(--color-gray-800);
+  --color-sidebar-active: var(--color-gray-700);
 }
 
 .dark {
   --color-sidebar-background: var(--color-gray-800);
   --color-sidebar-text: var(--color-white);
   --color-header-background: var(--color-gray-800);
+  --color-sidebar-hover: var(--color-gray-700);
+  --color-sidebar-active: var(--color-gray-600);
 }
 </style>
 
@@ -57,9 +67,10 @@ const { mobile } = useBreakpoint()
   left: 0;
   top: 0;
   z-index: 100;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid var(--color-border);
 }
 
 .sidebar-header {
@@ -69,10 +80,24 @@ const { mobile } = useBreakpoint()
   font-size: var(--text-h3);
 }
 
+.header-link {
+  text-decoration: none;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-white);
+  transition: opacity 0.2s ease;
+}
+
+.header-link:hover {
+  opacity: 0.9;
+}
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   flex: 1;
 }
 
@@ -80,23 +105,30 @@ const { mobile } = useBreakpoint()
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-sm);
   text-decoration: none;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
+  font-size: var(--text-small);
+  color: var(--color-sidebar-text);
+}
+
+.nav-item:hover {
+  background: var(--color-sidebar-hover);
 }
 
 .nav-item.active {
+  background: var(--color-sidebar-active);
   font-weight: 500;
+  color: var(--color-white);
 }
 
-.header-link {
-  text-decoration: none;
-  white-space: nowrap;
+.logout-item {
+  color: var(--color-notice-red-text);
 }
 
-.header-link:hover {
-  opacity: 0.9;
+.logout-item:hover {
+  background: var(--color-notice-red);
+  color: var(--color-white);
 }
 </style>

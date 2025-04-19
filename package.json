@@ -16,7 +16,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@christfirst/genesis": "^0.26.36",
+    "@christfirst/genesis": "^0.26.39",
     "@nuxt/eslint": "^1.3.0",
     "@nuxt/fonts": "^0.11.1",
     "@nuxt/scripts": "^0.11.5",

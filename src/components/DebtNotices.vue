@@ -32,7 +32,7 @@
         <strong>Minimum Payment Alert</strong>
         <span>
           Your minimum payment is less than {{ formatPercentage(MIN_PAYMENT_THRESHOLD) }} of your balance ({{
-            balance ? formatCurrency(balance * MIN_PAYMENT_THRESHOLD) : '$0.00'
+            balance ? formatCurrency(calculateRecommendedMinPayment(balance)) : '$0.00'
           }}
           recommended). Consider increasing your minimum payment to avoid prolonged debt repayment.
         </span>
@@ -54,14 +54,6 @@
 </template>
 
 <script setup lang="ts">
-const MIN_PAYMENT_PERCENTAGE = 3 // 3%
-const LARGE_BALANCE_AMOUNT = 10000 // $10,000
-const HIGH_APR_PERCENTAGE = 20 // 20%
-
-const MIN_PAYMENT_THRESHOLD = MIN_PAYMENT_PERCENTAGE / 100
-const LARGE_BALANCE_THRESHOLD = LARGE_BALANCE_AMOUNT
-const HIGH_APR_THRESHOLD = HIGH_APR_PERCENTAGE * 10000 // Convert to internal APR format
-
 const props = defineProps<{
   balance: number
   apr: number
@@ -100,29 +92,23 @@ watch(
   { deep: true }
 )
 
-function calculateYearlyInterest(balance: number, apr: number): number {
-  return balance * (apr / 1000000) // Divide by 1M because apr is in 10000ths
-}
-
-// Update computed properties to use debounced values
+// Update computed properties to use utility functions
 const showInterestAlert = computed(
-  () => Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD && Number(debouncedValues.value.balance) > 0
+  () => isHighAPR(Number(debouncedValues.value.apr)) && Number(debouncedValues.value.balance) > 0
 )
 
 const showLargeBalanceAlert = computed(
-  () =>
-    Number(debouncedValues.value.balance) >= LARGE_BALANCE_THRESHOLD &&
-    Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD
+  () => isLargeBalance(Number(debouncedValues.value.balance)) && isHighAPR(Number(debouncedValues.value.apr))
 )
 
 const showMinPaymentAlert = computed(() => {
   const balance = Number(debouncedValues.value.balance || 0)
   const minPayment = Number(debouncedValues.value.minPayment || 0)
-  return balance > 0 && minPayment > 0 && minPayment < balance * MIN_PAYMENT_THRESHOLD
+  return isMinPaymentTooLow(balance, minPayment)
 })
 
 const showExtraPaymentNote = computed(
-  () => Number(debouncedValues.value.extraPayment) > 0 && Number(debouncedValues.value.apr) >= HIGH_APR_THRESHOLD
+  () => Number(debouncedValues.value.extraPayment) > 0 && isHighAPR(Number(debouncedValues.value.apr))
 )
 
 const interestPerYear = computed(() =>

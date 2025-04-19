@@ -34,14 +34,7 @@
     </template>
 
     <main :class="{ mobile }">
-      <Button
-        class="btn-text appearance-toggle"
-        style="color: var(--appearance-toggle-color)"
-        :aria-label="colorMode.preference === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
-        @click="toggleColorMode"
-      >
-        <Icon :name="appearanceIconName" size="var(--text-h2)" aria-hidden="true" />
-      </Button>
+      <AppearanceToggle class="appearance-toggle" />
 
       <div class="content-wrapper">
         <motion.div v-if="loginError" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }">
@@ -78,18 +71,11 @@
 import { motion } from 'motion-v'
 
 const mounted = ref(false)
-const colorMode = useColorMode()
 const { mobile, desktop } = useBreakpoint()
 
 const loginError = useState('loginError', () => '')
 
 const carouselItems = ['/webp/ava1.webp', '/webp/ava2.webp', '/webp/ava3.webp']
-
-const appearanceIconName = computed(() => (colorMode.preference === 'light' ? 'ph:moon-fill' : 'ph:sun-dim-fill'))
-
-function toggleColorMode() {
-  colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'
-}
 
 onMounted(() => {
   mounted.value = true

@@ -5,7 +5,7 @@
 
       <motion.div :initial="false" :animate="carouselAnimation" class="carousel-track">
         <div v-for="item in items" :key="item" class="carousel-item">
-          <img :src="item" :alt="item" loading="eager" >
+          <img :src="item" :alt="item" loading="eager" />
         </div>
       </motion.div>
 
@@ -55,7 +55,7 @@ function next() {
 }
 
 onMounted(() => {
-  interval.value = setInterval(next, 3000)
+  interval.value = setInterval(next, 6000)
 })
 
 onUnmounted(() => {
@@ -141,7 +141,7 @@ onUnmounted(() => {
   width: 45px;
   height: 5px;
   border-radius: var(--radius-sm);
-  background-color: var(--color-notice-gray);
+  background-color: var(--color-card-bg);
   cursor: pointer;
 }
 

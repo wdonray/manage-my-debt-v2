@@ -18,6 +18,9 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     ...nuxtDoctrineConfig.modules,
   ],
+  imports: {
+    dirs: ['constants.ts'],
+  },
   icon: {
     ...nuxtDoctrineConfig.icon,
     clientBundle: {

@@ -1,11 +1,13 @@
 <template>
   <Card border class="summary-card">
-    <Flex stack gap="md">
+    <Flex stack>
       <Flex align="center" gap="sm">
         <Icon v-if="icon" :name="icon" size="24" :style="{ color }" />
         <slot name="title">
           <span class="text-secondary">{{ title }}</span>
         </slot>
+        <FlexSpace />
+        <slot name="actions" />
       </Flex>
 
       <slot />

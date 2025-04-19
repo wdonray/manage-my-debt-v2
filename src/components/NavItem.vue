@@ -1,7 +1,12 @@
 <template>
   <NuxtLink :to="to" class="nav-item" :class="{ active }">
-    <Icon :name="icon" size="24" />
-    <span>{{ label }}</span>
+    <slot name="icon">
+      <Icon :name="icon" size="24" />
+    </slot>
+
+    <slot name="label">
+      <span>{{ label }}</span>
+    </slot>
   </NuxtLink>
 </template>
 

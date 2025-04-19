@@ -2,15 +2,19 @@
   <div class="nav-group">
     <button class="nav-group-header" @click="toggleSection">
       <Flex align="center" gap="md">
-        <Flex align="center" gap="sm">
-          <Icon :name="icon" size="24" />
-          <span>{{ title }}</span>
+        <Flex align="center" gap="md">
+          <slot name="icon">
+            <Icon :name="icon" size="24" />
+          </slot>
+          <slot name="title">
+            <span>{{ title }}</span>
+          </slot>
         </Flex>
 
         <FlexSpace />
 
-        <motion.div class="accordion-icon" :animate="{ rotate: active ? 180 : 0 }" :transition>
-          <Icon name="ph:caret-down" size="18" />
+        <motion.div class="accordion-icon" :animate="animate" :transition>
+          <Icon :name="reverse ? 'ph:caret-up' : 'ph:caret-down'" size="18" />
         </motion.div>
       </Flex>
     </button>
@@ -38,8 +42,9 @@ import { useLocalStorage } from '@vueuse/core'
 import { motion } from 'motion-v'
 
 const props = defineProps<{
-  title: string
-  icon: string
+  title?: string
+  icon?: string
+  reverse?: boolean
 }>()
 
 const transition = {
@@ -47,6 +52,14 @@ const transition = {
   stiffness: 400,
   damping: 30,
 }
+
+const animate = computed(() => {
+  if (!props.reverse) {
+    return { rotate: active.value ? 0 : 180 }
+  }
+
+  return { rotate: active.value ? 180 : 0 }
+})
 
 const active = useLocalStorage(`nav-group-${props.title}-active`, false)
 
@@ -84,7 +97,7 @@ button:not(:disabled):active {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  padding-left: calc(var(--spacing-md) + var(--spacing-sm));
+  padding-left: var(--spacing-sm);
   margin-top: var(--spacing-xs);
 }
 </style>

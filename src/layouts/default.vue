@@ -21,7 +21,7 @@ onMounted(() => {
 
 <style>
 :root {
-  --sidebar-width: 210px;
+  --sidebar-width: 215px;
 }
 </style>
 
