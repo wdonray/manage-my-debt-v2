@@ -62,7 +62,7 @@
         </template>
 
         <template #actions>
-          <NuxtLink :to="`/debts/edit/${priorityDebt?.id}`">
+          <NuxtLink :to="{ name: 'debts-edit-id', params: { id: priorityDebt?.id } }">
             <Button class="btn-text">
               <Icon name="ph:sliders-bold" size="20" />
               Adjust Payment
@@ -94,7 +94,7 @@
 
           <hr class="margin-0" />
 
-          <Notice v-if="unableToPayoff" type="warning" align="start" role="alert">
+          <Notice v-if="unableToPayoff" type="warning" align="flex-start" role="alert">
             <Flex gap="sm" stack>
               <strong>Interest Exceeding Payment</strong>
               <span>

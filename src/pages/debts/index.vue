@@ -32,7 +32,13 @@
           />
         </Flex>
 
-        <Notice v-if="sortedDebts.length === 0" :key="`${statusFilter}-empty`" align="start" type="info" role="alert">
+        <Notice
+          v-if="sortedDebts.length === 0"
+          :key="`${statusFilter}-empty`"
+          align="flex-start"
+          type="info"
+          role="alert"
+        >
           <Flex stack gap="sm">
             <div>
               No debts found with status

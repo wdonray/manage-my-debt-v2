@@ -1,7 +1,7 @@
 <template>
   <Flex v-auto-animate stack gap="md" class="debt-notices">
     <!-- High APR Warning -->
-    <Notice v-if="showInterestAlert" align="start" type="warning" size="xs">
+    <Notice v-if="showInterestAlert" align="flex-start" type="warning" size="xs">
       <Flex stack gap="sm">
         <strong>High Interest Rate Priority</strong>
         <span>
@@ -16,7 +16,7 @@
     </Notice>
 
     <!-- Large Balance with High APR Warning -->
-    <Notice v-if="showLargeBalanceAlert" align="start" type="info" size="xs">
+    <Notice v-if="showLargeBalanceAlert" align="flex-start" type="info" size="xs">
       <Flex stack gap="sm">
         <strong>Large Balance Strategy Note</strong>
         <span>
@@ -27,7 +27,7 @@
     </Notice>
 
     <!-- Minimum Payment vs Balance Warning -->
-    <Notice v-if="showMinPaymentAlert" align="start" type="warning" size="xs">
+    <Notice v-if="showMinPaymentAlert" align="flex-start" type="warning" size="xs">
       <Flex stack gap="sm">
         <strong>Minimum Payment Alert</strong>
         <span>
@@ -40,7 +40,7 @@
     </Notice>
 
     <!-- Extra Payment Strategy Notice -->
-    <Notice v-if="showExtraPaymentNote" align="start" type="success" size="xs">
+    <Notice v-if="showExtraPaymentNote" align="flex-start" type="success" size="xs">
       <Flex stack gap="sm">
         <strong>Extra Payment Strategy</strong>
         <span>

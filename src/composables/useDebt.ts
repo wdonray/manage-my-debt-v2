@@ -1,6 +1,6 @@
 import type { Debt, DebtCreatePayload, DebtUpdatePayload } from '~/types/database'
 
-export default function useDebt(debtId?: number, { disableFetch = false }: { disableFetch?: boolean } = {}) {
+export default function useDebt(debtId?: string, { disableFetch = false }: { disableFetch?: boolean } = {}) {
   const { user } = useAuth()
   const debt = ref<Debt>({} as Debt)
   const loading = ref(false)

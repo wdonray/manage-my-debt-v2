@@ -1,5 +1,5 @@
 <template>
-  <Grid columns="1.618fr 1fr" gap="xl" style="position: relative">
+  <Grid v-if="render" columns="1.618fr 1fr" gap="xl" style="position: relative">
     <FormWithValidation @submit="submit">
       <Card border class="form-card">
         <Flex v-auto-animate stack>
@@ -15,7 +15,6 @@
               optional
               placeholder="e.g., Credit Card, Student Loan, Car Loan"
               description="Give this debt a recognizable name to track it in your avalanche strategy"
-              :fetching="loading"
             />
             <FieldCurrency
               v-model="formData.balance"
@@ -23,7 +22,6 @@
               name="balance"
               validations="required|min_value:1"
               description="The total amount you currently owe. This helps determine your debt payoff timeline"
-              :fetching="loading"
             />
             <FieldPercentage
               v-model="formData.apr"
@@ -31,7 +29,6 @@
               name="apr"
               validations="required|min_value:0"
               description="Annual Percentage Rate - The avalanche method targets high-interest debts first to minimize interest costs"
-              :fetching="loading"
             />
           </section>
 
@@ -204,7 +201,7 @@
 import type { DebtCreatePayload, DebtUpdatePayload } from '~/types/database'
 
 const props = defineProps<{
-  id?: number
+  id?: string
 }>()
 
 const editing = Boolean(props.id)
@@ -230,9 +227,14 @@ const statusOptions = [
 ]
 
 const { addDebt, updateDebt, debt, loading } = useDebt(props.id, { disableFetch: !editing })
+
 useForm(debt, formData)
 
-const router = useRouter()
+const render = computed(() => {
+  if (!editing) return true
+  if (editing && formData.value.balance) return true
+  return false
+})
 
 const steps = {
   BASIC_INFO: 0,
@@ -241,6 +243,8 @@ const steps = {
 }
 
 const { currentStep, nextStep, previousStep } = useSteps(steps)
+
+const router = useRouter()
 
 async function submit() {
   if (loading.value) return
