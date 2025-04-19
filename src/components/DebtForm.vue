@@ -13,6 +13,7 @@
               label="Debt Name"
               name="name"
               optional
+              maxlength="20"
               placeholder="e.g., Credit Card, Student Loan, Car Loan"
               description="Give this debt a recognizable name to track it in your avalanche strategy"
             />
@@ -323,6 +324,7 @@ function cancel() {
   top: var(--spacing-xl);
   transition: all 0.3s ease;
   background-color: var(--color-preview-card-background);
+  overflow: hidden;
 }
 
 .preview-title {
@@ -348,6 +350,8 @@ function cancel() {
   padding: var(--spacing-sm);
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .preview-item:hover {
