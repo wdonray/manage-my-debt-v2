@@ -50,73 +50,136 @@
     </section>
 
     <section class="priority-debt">
-      <DashboardCard v-if="priorityDebt" color="var(--color-border)">
-        <template #title>
-          <Flex :align="mobile ? 'start' : 'center'" gap="sm" :stack="mobile">
-            <Icon name="ph:target-bold" size="24" style="color: var(--color-notice-red-text)" />
-            <Flex gap="sm" align="baseline" :stack="mobile">
-              <h3 class="margin-0">Priority Debt</h3>
-              <small class="text-secondary">Highest interest at {{ formatPercentage(priorityDebt.apr) }}</small>
-            </Flex>
-          </Flex>
-        </template>
-
-        <template #actions>
-          <NuxtLink :to="{ name: 'debts-edit-id', params: { id: priorityDebt?.id } }">
-            <Button class="btn-text">
-              <Icon name="ph:sliders-bold" size="20" />
-              Adjust Payment
-            </Button>
-          </NuxtLink>
-        </template>
-
-        <Flex v-if="priorityDebt" stack>
-          <Flex>
-            <h2 class="margin-0">{{ priorityDebt.name || 'Unnamed Debt' }}</h2>
-          </Flex>
-
-          <Grid columns="1fr 1fr" gap="md">
-            <Flex stack gap="xs" class="debt-balance">
-              <span class="text-secondary">Current Balance</span>
-              <h3>{{ formatCurrency(priorityDebt.balance) }}</h3>
-            </Flex>
-
-            <Flex stack gap="xs" class="debt-payment">
-              <span class="text-secondary">Monthly Payment</span>
+      <Flex v-if="priorityDebt" stack gap="xl">
+        <DashboardCard>
+          <template #title>
+            <Flex gap="sm">
+              <Icon name="ph:target-bold" size="24" style="color: var(--color-notice-red-text)" />
               <Flex align="center" gap="sm">
-                <h3>{{ formatCurrency(priorityDebt.min_payment + (priorityDebt.extra_payment || 0)) }}</h3>
-                <small v-if="priorityDebt.extra_payment" style="color: var(--color-notice-green-text)">
-                  +{{ formatCurrency(priorityDebt.extra_payment) }} extra
-                </small>
+                <template v-if="!mobile">
+                  <h3 class="margin-0">Focus Debt</h3>
+                  <Icon name="ph:arrow-right-bold" size="20" style="color: var(--color-notice-red-text)" />
+                </template>
+                <h3 class="margin-0">{{ priorityDebt.name || 'Unnamed Debt' }}</h3>
               </Flex>
             </Flex>
-          </Grid>
+          </template>
 
-          <hr class="margin-0" />
+          <template #actions>
+            <NuxtLink :to="{ name: 'debts-edit-id', params: { id: priorityDebt?.id } }">
+              <Button class="btn-text">
+                <Icon name="ph:sliders-bold" size="20" />
+                Update Payment
+              </Button>
+            </NuxtLink>
+          </template>
 
-          <Notice v-if="unableToPayoff" type="warning" align="flex-start" role="alert">
-            <Flex gap="sm" stack>
-              <strong>Interest Exceeding Payment</strong>
-              <span>
-                To reduce this high-interest debt, increase your monthly payment to
-                {{ formatCurrency(calculateRecommendedMinPayment(priorityDebt.balance)) }}.
-              </span>
-              <small class="text-secondary">
-                Following debt avalanche: Pay minimum on lower-interest debts and focus extra funds here.
-              </small>
-            </Flex>
-          </Notice>
+          <Flex stack gap="xl">
+            <ProgressBar
+              v-if="priorityDebt.starting_balance"
+              :progress="payoffProgress"
+              variant="success"
+              :aria-label="`${payoffProgress}% of debt paid off`"
+            >
+              <template #label>
+                <Flex gap="xs" align="baseline">
+                  <strong class="h2 margin-0">
+                    {{ formatCurrency(priorityDebt.starting_balance - priorityDebt.balance) }}
+                  </strong>
+                  <span class="h2 text-secondary margin-0">/</span>
+                  <span class="h2 text-secondary margin-0">{{ formatCurrency(priorityDebt.starting_balance) }}</span>
+                </Flex>
+              </template>
+            </ProgressBar>
 
-          <Flex v-else stack gap="md">
-            <span class="text-secondary">Time Until Payoff</span>
+            <Grid :columns="estimatedPayoffMonths ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr'">
+              <Flex v-if="estimatedPayoffMonths" stack gap="md">
+                <span class="text-secondary">Estimated Payoff</span>
+                <h3 class="margin-0">{{ estimatedPayoffDate }}</h3>
+              </Flex>
 
-            <Flex align="baseline" gap="sm" class="timeline-details">
-              <h3>{{ formattedPayoffMonths }} {{ estimatedPayoffMonths === Infinity ? '' : 'months' }}</h3>
-              <small class="text-secondary">{{ estimatedPayoffDate }}</small>
-            </Flex>
+              <Flex stack gap="md" class="debt-payment">
+                <span class="text-secondary">Monthly Payment</span>
+
+                <Flex align="baseline" gap="sm">
+                  <h3 class="margin-0">{{ formatCurrency(priorityDebt.min_payment) }}</h3>
+                  <small v-if="priorityDebt.extra_payment" style="color: var(--color-notice-green-text)">
+                    +{{ formatCurrency(priorityDebt.extra_payment) }} extra
+                  </small>
+                </Flex>
+              </Flex>
+
+              <Flex stack gap="md" class="debt-balance">
+                <span class="text-secondary">Remaining Balance</span>
+                <h3 class="margin-0">{{ formatCurrency(priorityDebt.balance) }}</h3>
+              </Flex>
+
+              <Flex stack gap="md" class="debt-payment">
+                <span class="text-secondary">Interest Rate</span>
+                <h3 class="margin-0">{{ formatPercentage(priorityDebt.apr) }}</h3>
+              </Flex>
+            </Grid>
+
+            <template v-if="priorityDebt">
+              <Notice v-if="paymentOnlyCoversInterest" type="error" align="flex-start" role="alert">
+                <Flex gap="sm" stack>
+                  <strong>Payment Only Covers Interest</strong>
+                  <span>
+                    Increase payment to at least
+                    {{ formatCurrency(calculateMonthlyInterest(priorityDebt.balance, priorityDebt.apr) + 1) }}
+                    to start reducing your balance.
+                  </span>
+                  <small class="text-secondary">
+                    Monthly interest:
+                    {{ formatCurrency(calculateMonthlyInterest(priorityDebt.balance, priorityDebt.apr)) }}
+                  </small>
+                </Flex>
+              </Notice>
+
+              <Notice
+                v-else-if="isMinPaymentTooLow(priorityDebt.balance, monthlyPayment)"
+                type="warning"
+                align="flex-start"
+                role="alert"
+              >
+                <Flex gap="sm" stack>
+                  <strong>Speed Up Your Progress</strong>
+                  <span>
+                    Recommended payment: {{ formatCurrency(calculateRecommendedMinPayment(priorityDebt.balance)) }}
+                  </span>
+                  <small class="text-secondary">Higher payments on high-interest debt save more money over time</small>
+                </Flex>
+              </Notice>
+            </template>
           </Flex>
+        </DashboardCard>
+
+        <hr class="margin-0" />
+
+        <Flex stack gap="md">
+          <h2 class="margin-0">Other Debts</h2>
+          <DashboardCard v-for="debt in debts.filter((debt) => debt.id !== priorityDebt?.id)" :key="debt.id">
+            <Grid columns="200px 1fr 1fr 1fr" align="center">
+              <h3 class="margin-0">{{ debt.name || 'Unnamed Debt' }}</h3>
+
+              <Flex align="baseline" gap="sm">
+                <small class="text-secondary">Balance</small>
+                <span>{{ formatCurrency(debt.balance) }}</span>
+              </Flex>
+
+              <Flex align="baseline" gap="sm">
+                <small class="text-secondary">APR</small>
+                <span>{{ formatPercentage(debt.apr) }}</span>
+              </Flex>
+
+              <Flex align="baseline" gap="sm">
+                <small class="text-secondary">Monthly</small>
+                <span>{{ formatCurrency(debt.min_payment) }}</span>
+              </Flex>
+            </Grid>
+          </DashboardCard>
         </Flex>
-      </DashboardCard>
+      </Flex>
 
       <Notice v-else type="info" role="alert">
         <p>Ready to start your debt-free journey? Add your first debt to get started.</p>
@@ -143,33 +206,19 @@ const name = computed(() => profile.value?.username || profile.value?.full_name)
 const totalDebt = computed(() => calculateTotalDebt(debts.value))
 const totalMonthlyPayments = computed(() => calculateTotalMonthlyPayments(debts.value))
 const priorityDebt = computed(() => getPriorityDebt(debts.value))
+const monthlyPayment = computed(() =>
+  priorityDebt.value ? priorityDebt.value?.min_payment + (priorityDebt.value?.extra_payment || 0) : 0
+)
 const estimatedPayoffMonths = computed(() => (priorityDebt.value ? calculatePayoffMonths(priorityDebt.value) : 0))
 const estimatedPayoffDate = computed(() => (priorityDebt.value ? calculatePayoffDate(priorityDebt.value) : ''))
-const unableToPayoff = computed(() => estimatedPayoffMonths.value === Infinity)
-const formattedPayoffMonths = computed(() => `${estimatedPayoffMonths.value}`)
+const paymentOnlyCoversInterest = computed(() => estimatedPayoffMonths.value === Infinity)
 const averageAPR = computed(() => calculateAverageAPR(debts.value))
+const payoffProgress = computed(() => (priorityDebt.value ? calculatePayoffProgress(priorityDebt.value) : 0))
 </script>
 
 <style scoped>
 .metric-value {
-  font-size: calc(var(--text-h1) * 1.25); /* 2.5rem -> using h1 as base */
-}
-
-.debt-apr {
-  font-size: var(--text-h3);
-  font-weight: 600;
-}
-
-.debt-balance h3,
-.debt-payment h3 {
-  font-size: var(--text-h2);
-  margin: 0;
-}
-
-.timeline-details h3 {
-  font-size: var(--text-h2);
-  margin: 0;
-  color: var(--color-text-primary);
+  font-size: calc(var(--text-h1) * 1.25);
 }
 
 .text-notice-red {

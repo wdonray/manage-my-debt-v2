@@ -10,19 +10,17 @@
 
       <nav class="sidebar-nav">
         <NavItem to="/debts" icon="ph:notebook-bold" label="View All Debts" />
-        <NavItem to="/debts/new" icon="ph:plus-circle-bold" label="Add New Debt" />
-
         <NavItem to="/payment-schedule" icon="ph:calendar-bold" label="Payment Schedule" />
         <NavItem to="/goals" icon="ph:target-bold" label="Financial Goals" />
 
         <FlexSpace />
 
-        <NavGroup title="Account" reverse>
+        <NavGroup :title="profile.username || profile.full_name || 'Account'" reverse>
           <template #icon>
             <Avatar size="32" />
           </template>
           <NavItem to="/help" icon="ph:question-bold" label="Get Help" />
-          <NavItem to="/profile" icon="ph:user-gear-bold" label="Settings" />
+          <NavItem to="/profile" icon="ph:user-gear-bold" label="Profile" />
           <NavItem to="/logout" icon="ph:sign-out-bold" label="Sign Out" class="logout-item" />
         </NavGroup>
       </nav>
@@ -31,7 +29,9 @@
 </template>
 
 <script setup lang="ts">
+import type { Profile } from '~/types/database'
 const { mobile } = useBreakpoint()
+const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
 </script>
 
 <style>

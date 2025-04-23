@@ -28,6 +28,17 @@
               validations="required|min_value:1"
               description="The total amount you currently owe. This helps determine your debt payoff timeline"
             />
+            <FieldCurrency
+              v-model="formData.starting_balance"
+              label="Starting Balance"
+              name="starting_balance"
+              :validations="editing ? 'required|min_value:1' : 'min_value:1'"
+              :description="
+                editing
+                  ? 'The initial balance when you started tracking this debt (required when editing)'
+                  : 'The initial balance when you started tracking this debt. Will default to current balance if not set'
+              "
+            />
             <FieldPercentage
               v-model="formData.apr"
               label="Interest Rate (APR) *"
@@ -151,6 +162,12 @@
               <span>{{ formData.balance ? formatCurrency(formData.balance) : '—' }}</span>
             </Flex>
 
+            <Flex v-if="formData.starting_balance" class="preview-item">
+              <strong>Starting Balance</strong>
+              <FlexSpace />
+              <span>{{ formatCurrency(formData.starting_balance) }}</span>
+            </Flex>
+
             <Flex class="preview-item">
               <strong>Interest Rate</strong>
               <FlexSpace />
@@ -222,6 +239,7 @@ const editing = Boolean(props.id)
 const formData = ref<DebtCreatePayload | DebtUpdatePayload>({
   name: '',
   balance: 0,
+  starting_balance: null,
   apr: 0,
   min_payment: 0,
   extra_payment: 0,
@@ -266,7 +284,7 @@ async function submit() {
     formData.value.start_date = new Date().toISOString()
 
     if (editing && props.id) {
-      await updateDebt(formData.value)
+      await updateDebt(formData.value as DebtUpdatePayload)
     } else {
       await addDebt(formData.value as DebtCreatePayload)
     }

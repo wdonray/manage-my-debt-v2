@@ -183,3 +183,26 @@ export function calculateAverageAPR(debts: Debt[]): number {
   if (debts.length === 0) return 0
   return debts.reduce((acc, debt) => acc + debt.apr, 0) / debts.length
 }
+
+/**
+ * Calculate amount paid off for a debt
+ *
+ * @param debt The debt object containing balance and starting_balance
+ * @returns The amount paid off so far
+ */
+export function calculateAmountPaidOff(debt: Debt): number {
+  if (!debt.starting_balance) return 0
+  return Math.max(0, debt.starting_balance - debt.balance)
+}
+
+/**
+ * Calculate payoff progress percentage for a debt
+ *
+ * @param debt The debt object containing balance and starting_balance
+ * @returns The percentage of debt paid off (0-100)
+ */
+export function calculatePayoffProgress(debt: Debt): number {
+  if (!debt.starting_balance || debt.starting_balance <= 0) return 0
+  const amountPaid = debt.starting_balance - debt.balance
+  return Math.min(100, Math.round((amountPaid / debt.starting_balance) * 100))
+}

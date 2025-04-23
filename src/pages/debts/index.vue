@@ -1,32 +1,37 @@
 <template>
   <Flex stack>
     <Flex align="center" gap="md">
-      <h1>My Debts</h1>
+      <h1>Debt Overview</h1>
 
       <FlexSpace />
 
       <NuxtLink to="/debts/new">
-        <Button class="btn-primary btn-small">Add Debt</Button>
+        <Button class="btn-primary btn-small">Add New Debt</Button>
       </NuxtLink>
     </Flex>
 
     <div v-auto-animate>
-      <Spinner v-if="loading" />
+      <Spinner v-if="loading && !debts.length" />
 
       <Notice v-else-if="debts.length === 0" type="info" role="alert">
-        <p>You haven't added any debts yet. Click "Add Debt" to get started.</p>
+        <p>Start your debt-free journey by adding your first debt.</p>
+        <template #actions>
+          <NuxtLink to="/debts/new">
+            <Button class="btn-primary">Get Started</Button>
+          </NuxtLink>
+        </template>
       </Notice>
 
       <Flex v-else v-auto-animate stack>
         <Flex align="center" gap="md">
           <FlexSpace />
           <label for="status-filter">
-            <strong>Status</strong>
+            <strong>Filter by Status</strong>
           </label>
           <FieldSelect
             id="status-filter"
             v-model="statusFilter"
-            style="width: 90px; height: 30px"
+            style="width: 120px; height: 30px"
             disable-error-message
             :options="statusOptions"
           />
@@ -42,104 +47,94 @@
           <Flex stack gap="sm">
             <div>
               No debts found with status
-              <strong>"{{ statusFilter === 'not_set' ? 'Not set' : statusFilter }}"</strong>
+              <strong>"{{ statusFilter === 'not_set' ? 'Not Set' : formatCapitalize(statusFilter) }}"</strong>
             </div>
             <div>
-              Try changing the status filter or
-              <NuxtLink to="/debts/new" class="highlight">adding a new debt</NuxtLink>
+              <NuxtLink to="/debts/new" class="highlight">Add a new debt</NuxtLink>
+              or adjust the status filter above
             </div>
           </Flex>
         </Notice>
 
-        <Flex v-else-if="!desktop" stack>
-          <Card v-for="debt in sortedDebts" :key="debt.id" border gap="md">
-            <Flex stack gap="xl">
-              <Flex align="center" gap="md">
-                <h3 style="margin: 0">{{ debt.name || 'Unnamed Debt' }}</h3>
-                <FlexSpace />
-                <span :class="`status status-${debt.status}`">{{ debt.status || 'Not set' }}</span>
+        <Flex v-else :key="statusFilter" stack>
+          <DataTable :columns :rows="sortedDebts" borderless>
+            <template #name="{ row }">
+              <Flex align="center" gap="sm">
+                <Icon
+                  v-if="getPriorityDebt(debts)?.id === row.id"
+                  name="ph:target-bold"
+                  size="24"
+                  style="color: var(--color-notice-red-text)"
+                />
+                <strong>{{ row.name || 'Unnamed Debt' }}</strong>
               </Flex>
+            </template>
 
-              <Flex stack>
-                <Flex align="center" gap="md">
-                  <strong>Balance</strong>
-                  <FlexSpace />
-                  {{ formatCurrency(debt.balance) }}
-                </Flex>
+            <template #status="{ row }">
+              <strong v-if="row.status" class="status" :class="`status-${row.status}`">
+                {{ formatCapitalize(row.status) }}
+              </strong>
+              <strong v-else class="status status-null">Not set</strong>
+            </template>
 
-                <Flex align="center" gap="md">
-                  <strong>APR</strong>
-                  <FlexSpace />
-                  {{ formatPercentage(debt.apr) }}
-                </Flex>
-
-                <Flex align="center" gap="md">
-                  <strong>Min Payment</strong>
-                  <FlexSpace />
-                  {{ formatCurrency(debt.min_payment) }}
-                </Flex>
-
-                <Flex align="center" gap="md">
-                  <strong>Extra Payment</strong>
-                  <FlexSpace />
-                  {{ debt.extra_payment ? formatCurrency(debt.extra_payment) : 'None' }}
-                </Flex>
-
-                <Flex align="center" gap="md">
-                  <strong>Due Date</strong>
-                  <FlexSpace />
-                  {{ debt.due_date ? formatDate(debt.due_date) : 'Not set' }}
-                </Flex>
-              </Flex>
-
-              <div class="actions">
-                <Button
-                  class="btn-small btn-outline"
-                  style="color: var(--color-error); border-color: var(--color-error)"
-                  @click="removeDebt(debt.id)"
-                >
-                  Delete
-                </Button>
-                <NuxtLink :to="`/debts/edit/${debt.id}`">
-                  <Button class="btn-small btn-primary" style="width: 100%">Edit</Button>
+            <template #actions="{ row }">
+              <Flex>
+                <NuxtLink :to="{ name: 'debts-edit-id', params: { id: row.id } }">
+                  <Button class="btn-text">Edit</Button>
                 </NuxtLink>
-              </div>
-            </Flex>
-          </Card>
+                <Button class="btn-text" style="color: var(--color-error)" @click="removeDebt(row.id)">Delete</Button>
+              </Flex>
+            </template>
+
+            <template #dropdown="{ row }">
+              <Grid columns="1fr 1fr 1fr" gap="md">
+                <div>
+                  <h4 class="text-secondary margin-0">Payment Details</h4>
+                  <dl>
+                    <dt>Base Payment</dt>
+                    <dd>{{ formatCurrency(row.min_payment) }}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Additional Payment</dt>
+                    <dd>{{ row.extra_payment ? formatCurrency(row.extra_payment) : 'None' }}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Total Monthly</dt>
+                    <dd>{{ formatCurrency(row.min_payment + (row.extra_payment || 0)) }}</dd>
+                  </dl>
+                </div>
+
+                <div>
+                  <h4 class="text-secondary margin-0">Balance & Interest</h4>
+                  <dl>
+                    <dt>Initial Balance</dt>
+                    <dd>{{ row.starting_balance ? formatCurrency(row.starting_balance) : 'Not Set' }}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Current Balance</dt>
+                    <dd>{{ formatCurrency(row.balance) }}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Interest Rate (APR)</dt>
+                    <dd>{{ formatPercentage(row.apr) }}</dd>
+                  </dl>
+                </div>
+
+                <div>
+                  <h4 class="text-secondary margin-0">Timeline</h4>
+                  <dl>
+                    <dt>Started</dt>
+                    <dd>{{ row.start_date ? formatDate(row.start_date) : 'Not Set' }}</dd>
+                  </dl>
+                  <dl>
+                    <dt>Next Due</dt>
+                    <dd>{{ row.due_date ? formatDate(row.due_date) : 'Not Set' }}</dd>
+                  </dl>
+                </div>
+              </Grid>
+            </template>
+          </DataTable>
         </Flex>
-
-        <DataTable v-else :key="statusFilter" class="debts-table" :columns :rows="sortedDebts" striped borderless>
-          <template #name="{ row }">
-            {{ row.name || 'Unnamed Debt' }}
-          </template>
-
-          <template #balance="{ row }">
-            {{ formatCurrency(row.balance) }}
-          </template>
-
-          <template #apr="{ row }">
-            {{ formatPercentage(row.apr) }}
-          </template>
-
-          <template #min_payment="{ row }">
-            {{ formatCurrency(row.min_payment) }}
-          </template>
-
-          <template #extra_payment="{ row }">
-            {{ row.extra_payment ? formatCurrency(row.extra_payment) : 'None' }}
-          </template>
-
-          <template #actions="{ row }">
-            <Flex gap="md">
-              <NuxtLink :to="`/debts/edit/${row.id}`">
-                <Button class="btn-small btn-text">Edit</Button>
-              </NuxtLink>
-              <Button class="btn-small btn-text" style="color: var(--color-error)" @click="removeDebt(row.id)">
-                Delete
-              </Button>
-            </Flex>
-          </template>
-        </DataTable>
       </Flex>
     </div>
   </Flex>
@@ -147,17 +142,7 @@
 
 <script setup lang="ts">
 const statusFilter = ref('all')
-const { desktop } = useBreakpoint()
 const { debts, loading, fetchDebts } = useDebts()
-
-// 'current' -> 'behind' -> null -> 'paid_off' -> 'paused' -> 'closed'
-const statusOrder = {
-  current: 0,
-  behind: 1,
-  paid_off: 2,
-  paused: 3,
-  closed: 4,
-}
 
 const sortedDebts = computed(() => {
   return [...debts.value]
@@ -167,35 +152,31 @@ const sortedDebts = computed(() => {
       return debt.status === statusFilter.value
     })
     .sort((a, b) => {
-      // Handle null status first
-      if (a.status === null && b.status === null) {
-        return (a.priority_order ?? 0) - (b.priority_order ?? 0)
-      }
-      if (a.status === null) return -1
-      if (b.status === null) return 1
-
-      // Then sort by status order
-      if (statusOrder[a.status] !== statusOrder[b.status]) {
-        return statusOrder[a.status] - statusOrder[b.status]
-      }
-
-      // Finally sort by priority order
-      return (a.priority_order ?? 0) - (b.priority_order ?? 0)
+      // Sort by APR in descending order (highest interest first)
+      return b.apr - a.apr
     })
 })
 
-const columns = [
-  { key: 'name', display: 'Name' },
-  { key: 'balance', display: 'Balance' },
-  { key: 'apr', display: 'APR' },
-  { key: 'min_payment', display: 'Min Payment' },
-  { key: 'extra_payment', display: 'Extra Payment' },
+interface Column {
+  key: string
+  display: string
+  type?: 'date' | 'percentage' | 'currency'
+  class?: string
+  sortable?: boolean
+}
+
+const columns: Column[] = [
+  { key: 'name', display: 'Name', sortable: true },
+  { key: 'due_date', display: 'Due', type: 'date', sortable: true },
+  { key: 'apr', display: 'APR', type: 'percentage', sortable: true },
+  { key: 'balance', display: 'Balance', type: 'currency', sortable: true },
+  { key: 'status', display: 'Status', sortable: true },
   { key: 'actions', display: '' },
 ]
 
 const statusOptions = [
   { display: 'All', key: 'all' },
-  { display: 'Current', key: 'current' },
+  { display: 'Active', key: 'current' },
   { display: 'Behind', key: 'behind' },
   { display: 'Not set', key: 'not_set' },
   { display: 'Paid Off', key: 'paid_off' },
@@ -203,7 +184,7 @@ const statusOptions = [
   { display: 'Closed', key: 'closed' },
 ]
 
-async function removeDebt(debtId: number) {
+async function removeDebt(debtId: string) {
   const { removeDebt } = useDebt(debtId, { disableFetch: true })
   await removeDebt()
   fetchDebts()
@@ -216,11 +197,24 @@ async function removeDebt(debtId: number) {
 }
 
 .dark {
-  --color-text-inverted: var(--color-black);
+  --color-text-inverted: var(--color-gray-950);
 }
 </style>
 
 <style scoped>
+:deep(table) {
+  table-layout: auto;
+}
+
+dt {
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+dd {
+  margin: 0;
+}
+
 .actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -228,32 +222,30 @@ async function removeDebt(debtId: number) {
 }
 
 .status {
-  border-radius: var(--radius-sm);
-  padding: 4px 8px;
   color: var(--color-text-inverted);
 }
 
 .status-current {
-  background-color: var(--color-success);
+  color: var(--color-notice-green-text);
 }
 
 .status-behind {
-  background-color: var(--color-error);
+  color: var(--color-notice-red-text);
 }
 
 .status-paid_off {
-  background-color: var(--color-success);
+  color: var(--color-notice-green-text);
 }
 
 .status-paused {
-  background-color: var(--color-notice-yellow);
+  color: var(--color-notice-yellow-text);
 }
 
 .status-closed {
-  background-color: var(--color-error);
+  color: var(--color-notice-red-text);
 }
 
 .status-null {
-  background-color: var(--color-info);
+  color: var(--color-notice-gray-text);
 }
 </style>

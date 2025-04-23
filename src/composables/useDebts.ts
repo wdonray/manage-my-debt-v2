@@ -1,6 +1,17 @@
 import type { Debt } from '~/types/database'
 
-export default function useDebts({ disableFetch = false }: { disableFetch?: boolean } = {}) {
+interface UseDebtsOptions {
+  disableFetch?: boolean
+}
+
+/**
+ * Composable for managing debts data and state
+ *
+ * @param options Configuration options for the composable
+ * @param options.disableFetch Whether to disable automatic fetching of debts on initialization
+ * @returns Object containing debts data and utility functions
+ */
+export default function useDebts({ disableFetch = false }: UseDebtsOptions = {}) {
   const { user } = useAuth()
   const debts = useState<Debt[]>('debts', () => [])
   const loading = ref(false)

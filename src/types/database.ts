@@ -1,8 +1,9 @@
 export type Debt = {
-  id: number // bigint maps to number in TypeScript
+  id: string // bigint maps to number in TypeScript
   user_id: string
   name?: string
   balance: number
+  starting_balance: number | null
   apr: number
   min_payment: number
   extra_payment?: number
@@ -20,8 +21,10 @@ export type Debt = {
 // Type for data required to create a new debt
 export type DebtCreatePayload = Omit<Debt, 'id' | 'user_id' | 'created_at' | 'updated_at'>
 
-// Type for data allowed when updating a debt (all fields optional)
-export type DebtUpdatePayload = Partial<DebtCreatePayload>
+// Type for data allowed when updating a debt (all fields optional except starting_balance if provided)
+export type DebtUpdatePayload = Partial<Omit<DebtCreatePayload, 'starting_balance'>> & {
+  starting_balance?: number // Must be non-null if provided in update
+}
 
 // --- Profile Types ---
 export type Profile = {
