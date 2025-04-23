@@ -147,7 +147,7 @@
             Debt Summary
           </h3>
 
-          <hr class="preview-divider" />
+          <hr class="preview-divider" >
 
           <Flex v-auto-animate stack gap="xl">
             <Flex v-if="formData.name" class="preview-item">

@@ -42,14 +42,14 @@
       <div class="btn-group">
         <Button class="btn-outline btn-block" :disabled="signingIn" @click="() => signInWithOauth('google')">
           <Flex gap="sm" align="center">
-            <img src="/svg/google.svg" alt="Google" :width="iconSize" :height="iconSize" />
+            <img src="/svg/google.svg" alt="Google" :width="iconSize" :height="iconSize" >
             Google
           </Flex>
         </Button>
 
         <Button class="btn-outline btn-block" :disabled="signingIn" @click="() => signInWithOauth('facebook')">
           <Flex gap="sm" align="center">
-            <img src="/svg/facebook.svg" alt="Facebook" :width="iconSize" :height="iconSize" />
+            <img src="/svg/facebook.svg" alt="Facebook" :width="iconSize" :height="iconSize" >
             Facebook
           </Flex>
         </Button>

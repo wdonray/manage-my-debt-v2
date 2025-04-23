@@ -121,7 +121,7 @@
             </Grid>
 
             <template v-if="priorityDebt">
-              <Notice v-if="paymentOnlyCoversInterest" type="error" align="flex-start" role="alert">
+              <Notice v-if="paymentOnlyCoversInterest" type="error" align="flex-start">
                 <Flex gap="sm" stack>
                   <strong>Payment Only Covers Interest</strong>
                   <span>
@@ -140,7 +140,6 @@
                 v-else-if="isMinPaymentTooLow(priorityDebt.balance, monthlyPayment)"
                 type="warning"
                 align="flex-start"
-                role="alert"
               >
                 <Flex gap="sm" stack>
                   <strong>Speed Up Your Progress</strong>
@@ -154,7 +153,7 @@
           </Flex>
         </DashboardCard>
 
-        <hr class="margin-0" />
+        <hr class="margin-0" >
 
         <Flex stack gap="md">
           <h2 class="margin-0">Other Debts</h2>
@@ -181,7 +180,7 @@
         </Flex>
       </Flex>
 
-      <Notice v-else type="info" role="alert">
+      <Notice v-else type="info">
         <p>Ready to start your debt-free journey? Add your first debt to get started.</p>
         <template #actions>
           <NuxtLink to="/debts/new">

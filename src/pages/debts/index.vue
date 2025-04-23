@@ -13,7 +13,7 @@
     <div v-auto-animate>
       <Spinner v-if="loading && !debts.length" />
 
-      <Notice v-else-if="debts.length === 0" type="info" role="alert">
+      <Notice v-else-if="debts.length === 0" type="info">
         <p>Start your debt-free journey by adding your first debt.</p>
         <template #actions>
           <NuxtLink to="/debts/new">
@@ -37,13 +37,7 @@
           />
         </Flex>
 
-        <Notice
-          v-if="sortedDebts.length === 0"
-          :key="`${statusFilter}-empty`"
-          align="flex-start"
-          type="info"
-          role="alert"
-        >
+        <Notice v-if="sortedDebts.length === 0" :key="`${statusFilter}-empty`" align="flex-start" type="info">
           <Flex stack gap="sm">
             <div>
               No debts found with status

@@ -14,9 +14,7 @@
           <p>Loading profile...</p>
         </div>
 
-        <Notice v-else-if="error && !profile" type="error" role="alert">
-          Failed to load profile: {{ error.message }}
-        </Notice>
+        <Notice v-else-if="error && !profile" type="error">Failed to load profile: {{ error.message }}</Notice>
 
         <Card v-else-if="profile" border>
           <Flex v-auto-animate stack gap="md">
@@ -41,8 +39,8 @@
               </Flex>
             </FormWithValidation>
 
-            <Notice v-if="saveError" type="error" role="alert">Failed to save profile: {{ saveError.message }}</Notice>
-            <Notice v-if="saveSuccess" type="success" role="alert">Profile saved successfully!</Notice>
+            <Notice v-if="saveError" type="error">Failed to save profile: {{ saveError.message }}</Notice>
+            <Notice v-if="saveSuccess" type="success">Profile saved successfully!</Notice>
           </Flex>
         </Card>
 

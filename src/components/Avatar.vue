@@ -1,7 +1,7 @@
 <template>
   <NuxtLink to="/profile" class="avatar-container">
     <div v-if="profile.avatar_url" class="avatar">
-      <img :src="profile.avatar_url" :alt="profile?.email || 'Avatar'" />
+      <img :src="profile.avatar_url" :alt="profile?.email || 'Avatar'" >
     </div>
     <div v-else class="avatar">
       <Icon name="ph:user" :size="size || 40" />

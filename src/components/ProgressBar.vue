@@ -18,17 +18,9 @@
       :aria-valuemax="100"
       :aria-label="ariaLabel"
     >
-      <div
-        class="progress-fill"
-        :style="{
-          width: `${progress}%`,
-          backgroundColor: color,
-        }"
-      >
+      <div class="progress-fill" :style="{ width: `${progress}%` }">
         <div v-if="showAnimation" class="progress-animation" />
       </div>
-
-      <!-- Segment markers -->
       <template v-if="segments > 1">
         <div v-for="n in segments - 1" :key="n" class="segment-marker" :style="{ left: `${(n / segments) * 100}%` }" />
       </template>
@@ -44,7 +36,6 @@
 interface Props {
   progress: number
   variant?: 'primary' | 'success' | 'warning' | 'error'
-  color?: string
   height?: number
   showLabel?: boolean
   label?: string

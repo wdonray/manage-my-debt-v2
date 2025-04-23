@@ -5,7 +5,7 @@
 
       <motion.div :initial="false" :animate="carouselAnimation" class="carousel-track">
         <div v-for="item in items" :key="item" class="carousel-item">
-          <img :src="item" :alt="item" loading="eager" />
+          <img :src="item" :alt="item" loading="eager" >
         </div>
       </motion.div>
 

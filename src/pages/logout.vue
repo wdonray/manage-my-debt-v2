@@ -1,5 +1,5 @@
 <template>
-  <Notice v-if="signOutError" type="error" role="alert">
+  <Notice v-if="signOutError" type="error">
     {{ signOutError }}
   </Notice>
 </template>

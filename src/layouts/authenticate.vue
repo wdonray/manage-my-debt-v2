@@ -38,7 +38,7 @@
 
       <div class="content-wrapper">
         <motion.div v-if="loginError" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }">
-          <Notice type="error" role="alert" aria-live="polite">
+          <Notice type="error" aria-live="polite">
             {{ loginError }}
           </Notice>
         </motion.div>
