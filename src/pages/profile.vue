@@ -1,49 +1,63 @@
 <template>
   <div>
-    <PageHeader>Profile</PageHeader>
+    <PageHeader>
+      <template #icon>
+        <Avatar size="32" />
+      </template>
+      Your profile
+
+      <template #tools>
+        <FormStatus :unsaved :show-status :saving />
+      </template>
+    </PageHeader>
 
     <div v-auto-animate>
-      <div v-if="loading && !profile" class="text-center">
-        <p>Loading profile...</p>
-      </div>
-
-      <Notice v-else-if="error && !profile" type="error">Failed to load profile: {{ error.message }}</Notice>
+      <Notice v-if="error && !profile" type="error">Unable to load your profile: {{ error.message }}</Notice>
 
       <Clamp v-else-if="profile" size="md">
         <Card border>
-          <Flex v-auto-animate stack gap="md">
-            <FormWithValidation :fetching="loading" @submit="saveProfile">
-              <Flex stack gap="md">
-                <FieldText v-model="formData.email" label="Email" readonly />
-                <FieldText v-model="formData.username" label="Username" optional placeholder="Your public username" />
-                <FieldText v-model="formData.full_name" label="Full Name" optional placeholder="Your full name" />
-                <FieldText
-                  v-model="formData.website"
-                  label="Website"
-                  type="url"
-                  optional
-                  placeholder="https://yourwebsite.com"
-                />
+          <FormWithValidation :fetching="loading" @submit="saveProfile">
+            <FieldText
+              v-model="formData.email"
+              description="Your email address cannot be changed"
+              label="Email address"
+              readonly
+            />
+            <FieldText
+              v-model="formData.username"
+              label="Display name"
+              optional
+              placeholder="Choose a name that will be visible to others"
+            />
+            <FieldText
+              v-model="formData.full_name"
+              label="Full name"
+              optional
+              placeholder="Enter your first and last name"
+            />
+            <FieldText
+              v-model="formData.website"
+              label="Personal website"
+              type="url"
+              optional
+              placeholder="https://example.com"
+            />
 
-                <FieldTextArea v-model="formData.bio" label="Bio" optional placeholder="Tell us about yourself" />
+            <FieldTextArea
+              v-model="formData.bio"
+              label="About me"
+              optional
+              placeholder="Share a brief description about yourself"
+            />
 
-                <Flex justify="flex-end">
-                  <Button class="btn-primary" type="submit">
-                    {{ saving ? 'Saving...' : 'Save Profile' }}
-                  </Button>
-                </Flex>
-              </Flex>
-            </FormWithValidation>
-
-            <Notice v-if="saveError" type="error">Failed to save profile: {{ saveError.message }}</Notice>
-            <Notice v-if="saveSuccess" type="success">Profile saved successfully!</Notice>
-          </Flex>
+            <Flex justify="flex-end">
+              <Button class="btn-primary" type="submit" :disabled="saving">
+                {{ saving ? 'Updating...' : 'Update Profile' }}
+              </Button>
+            </Flex>
+          </FormWithValidation>
         </Card>
       </Clamp>
-
-      <div v-else class="text-center">
-        <p>Profile data is unavailable.</p>
-      </div>
     </div>
   </div>
 </template>
@@ -59,7 +73,7 @@ const formData = ref<ProfileUpdatePayload>({})
 const saveError = ref<Error | null>(null)
 const saveSuccess = ref(false)
 
-useForm(profile, formData)
+const { unsaved, showStatus, setUnsaved } = useForm(profile, formData)
 
 async function saveProfile() {
   saveError.value = null
@@ -68,7 +82,7 @@ async function saveProfile() {
   try {
     await updateProfile(formData.value)
     saveSuccess.value = true
-    setTimeout(() => (saveSuccess.value = false), 3000)
+    setUnsaved(false)
   } catch (err) {
     saveError.value = err instanceof Error ? err : new Error('Failed to save profile')
   }

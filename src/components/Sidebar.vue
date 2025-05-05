@@ -17,7 +17,7 @@
 
         <NavGroup :title="profile.username || profile.full_name || 'Account'" reverse :local-storage="false">
           <template #icon>
-            <Avatar size="32" />
+            <Avatar size="32" link="/profile" />
           </template>
           <NavItem to="/help" icon="ph:question" label="Get Help" />
           <NavItem to="/profile" icon="ph:user-gear" label="Profile" />

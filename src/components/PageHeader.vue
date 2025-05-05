@@ -1,7 +1,7 @@
 <template>
   <Flex stack gap="md" style="margin-bottom: var(--spacing-lg)">
-    <Flex gap="md">
-      <Flex gap="sm">
+    <Flex gap="md" align="center">
+      <Flex gap="sm" align="center">
         <slot v-if="$slots.icon" name="icon" />
         <component :is="mobile ? 'h3' : 'h1'" style="margin: 0">
           <slot />
