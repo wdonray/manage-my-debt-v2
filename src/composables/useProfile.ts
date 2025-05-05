@@ -6,6 +6,7 @@ export default function useProfile() {
   const { user } = useAuth()
   const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
   const loading = ref(false)
+  const saving = ref(false)
   const error = ref<Error | null>(null)
 
   const loaded = computed(() => Object.keys(profile.value).length > 0)
@@ -30,7 +31,7 @@ export default function useProfile() {
   async function updateProfile(profilePayload: ProfileUpdatePayload) {
     if (!user.value?.id || !profile.value) return
 
-    loading.value = true
+    saving.value = true
     error.value = null
 
     try {
@@ -41,7 +42,7 @@ export default function useProfile() {
       error.value = errorValue
       throw errorValue
     } finally {
-      loading.value = false
+      saving.value = false
     }
   }
 
@@ -64,5 +65,6 @@ export default function useProfile() {
     error,
     fetchProfile,
     updateProfile,
+    saving,
   }
 }

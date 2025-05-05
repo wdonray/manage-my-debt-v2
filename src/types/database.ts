@@ -35,6 +35,7 @@ export type Profile = {
   website: string | null
   updated_at: string | null // Timestamp with time zone
   email: string | null
+  bio: string | null
 }
 
 export type ProfileUpdatePayload = Partial<Omit<Profile, 'id' | 'updated_at'>>

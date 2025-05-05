@@ -1,14 +1,17 @@
 <template>
-  <Flex stack>
-    <Flex align="center" gap="md">
-      <h1>Debt Overview</h1>
+  <div>
+    <PageHeader>
+      Your debts
 
-      <FlexSpace />
-
-      <NuxtLink to="/debts/new">
-        <Button class="btn-primary btn-small">Add New Debt</Button>
-      </NuxtLink>
-    </Flex>
+      <template #tools>
+        <NuxtLink to="/debts/new">
+          <Button class="btn-primary btn-outline btn-small">
+            <Icon name="ph:plus-bold" size="16" />
+            Add debt
+          </Button>
+        </NuxtLink>
+      </template>
+    </PageHeader>
 
     <div v-auto-animate>
       <Center v-if="loading && !debts?.length">
@@ -133,7 +136,7 @@
         </Flex>
       </Flex>
     </div>
-  </Flex>
+  </div>
 </template>
 
 <script setup lang="ts">

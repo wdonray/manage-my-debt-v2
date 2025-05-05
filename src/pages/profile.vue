@@ -1,24 +1,18 @@
 <template>
-  <div class="container">
-    <Flex stack gap="md">
-      <Flex align="baseline">
-        <h1 style="margin: 0">Edit Profile</h1>
+  <div>
+    <PageHeader>Profile</PageHeader>
 
-        <small>
-          <NuxtLink class="highlight" to="/">Back to Dashboard</NuxtLink>
-        </small>
-      </Flex>
+    <div v-auto-animate>
+      <div v-if="loading && !profile" class="text-center">
+        <p>Loading profile...</p>
+      </div>
 
-      <div v-auto-animate>
-        <div v-if="loading && !profile" class="text-center">
-          <p>Loading profile...</p>
-        </div>
+      <Notice v-else-if="error && !profile" type="error">Failed to load profile: {{ error.message }}</Notice>
 
-        <Notice v-else-if="error && !profile" type="error">Failed to load profile: {{ error.message }}</Notice>
-
-        <Card v-else-if="profile" border>
+      <Clamp v-else-if="profile" size="md">
+        <Card border>
           <Flex v-auto-animate stack gap="md">
-            <FormWithValidation @submit="saveProfile">
+            <FormWithValidation :fetching="loading" @submit="saveProfile">
               <Flex stack gap="md">
                 <FieldText v-model="formData.email" label="Email" readonly />
                 <FieldText v-model="formData.username" label="Username" optional placeholder="Your public username" />
@@ -31,9 +25,11 @@
                   placeholder="https://yourwebsite.com"
                 />
 
+                <FieldTextArea v-model="formData.bio" label="Bio" optional placeholder="Tell us about yourself" />
+
                 <Flex justify="flex-end">
-                  <Button class="btn-primary" type="submit" :disabled="loading">
-                    {{ loading ? 'Saving...' : 'Save Profile' }}
+                  <Button class="btn-primary" type="submit">
+                    {{ saving ? 'Saving...' : 'Save Profile' }}
                   </Button>
                 </Flex>
               </Flex>
@@ -43,12 +39,12 @@
             <Notice v-if="saveSuccess" type="success">Profile saved successfully!</Notice>
           </Flex>
         </Card>
+      </Clamp>
 
-        <div v-else class="text-center">
-          <p>Profile data is unavailable.</p>
-        </div>
+      <div v-else class="text-center">
+        <p>Profile data is unavailable.</p>
       </div>
-    </Flex>
+    </div>
   </div>
 </template>
 
@@ -57,7 +53,7 @@ import { ref } from 'vue'
 import useProfile from '~/composables/useProfile'
 import type { ProfileUpdatePayload } from '~/types/database'
 
-const { profile, loading, error, updateProfile } = useProfile()
+const { profile, loading, error, updateProfile, saving } = useProfile()
 
 const formData = ref<ProfileUpdatePayload>({})
 const saveError = ref<Error | null>(null)
@@ -74,15 +70,7 @@ async function saveProfile() {
     saveSuccess.value = true
     setTimeout(() => (saveSuccess.value = false), 3000)
   } catch (err) {
-    console.error('Error saving profile in component:', err)
     saveError.value = err instanceof Error ? err : new Error('Failed to save profile')
   }
 }
 </script>
-
-<style scoped>
-.container {
-  max-width: 550px;
-  padding: var(--spacing-lg);
-}
-</style>

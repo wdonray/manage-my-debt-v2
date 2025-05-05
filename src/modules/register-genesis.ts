@@ -18,6 +18,7 @@ export default defineNuxtModule({
       'FieldPercentage',
       'FieldSelect',
       'FieldText',
+      'FieldTextArea',
       'FieldWrapper',
       'Flex',
       'FlexSpace',
