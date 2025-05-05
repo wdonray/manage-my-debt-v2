@@ -9,19 +9,22 @@
       </Flex>
 
       <nav class="sidebar-nav">
-        <NavItem to="/debts" icon="ph:notebook-bold" label="View All Debts" />
-        <NavItem to="/payment-schedule" icon="ph:calendar-bold" label="Payment Schedule" />
-        <NavItem to="/goals" icon="ph:target-bold" label="Financial Goals" />
+        <NavItem to="/debts" icon="ph:notebook" label="View All Debts" />
+        <NavItem to="/payment-schedule" icon="ph:calendar" label="Payment Schedule" />
+        <NavItem to="/goals" icon="ph:target" label="Financial Goals" />
 
         <FlexSpace />
 
-        <NavGroup :title="profile.username || profile.full_name || 'Account'" reverse>
+        <NavGroup :title="profile.username || profile.full_name || 'Account'" reverse :local-storage="false">
           <template #icon>
             <Avatar size="32" />
           </template>
-          <NavItem to="/help" icon="ph:question-bold" label="Get Help" />
-          <NavItem to="/profile" icon="ph:user-gear-bold" label="Profile" />
-          <NavItem to="/logout" icon="ph:sign-out-bold" label="Sign Out" class="logout-item" />
+          <NavItem to="/help" icon="ph:question" label="Get Help" />
+          <NavItem to="/profile" icon="ph:user-gear" label="Profile" />
+          <NavAction label="Appearance">
+            <AppearanceToggle :size="18" outline />
+          </NavAction>
+          <NavItem to="/logout" icon="ph:sign-out" label="Sign Out" class="logout-item" />
         </NavGroup>
       </nav>
     </aside>
@@ -39,16 +42,16 @@ const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
   --color-sidebar-background: var(--color-gray-900);
   --color-sidebar-text: var(--color-gray-300);
   --color-header-background: var(--color-gray-900);
-  --color-sidebar-hover: var(--color-gray-800);
-  --color-sidebar-active: var(--color-gray-700);
+  --color-sign-out-text-hover: var(--color-red-500);
+  --appearance-toggle-color: var(--color-gray-50);
 }
 
 .dark {
   --color-sidebar-background: var(--color-gray-800);
   --color-sidebar-text: var(--color-white);
   --color-header-background: var(--color-gray-800);
-  --color-sidebar-hover: var(--color-gray-700);
-  --color-sidebar-active: var(--color-gray-600);
+  --color-sign-out-text-hover: var(--color-red-400);
+  --appearance-toggle-color: var(--color-gray-50);
 }
 </style>
 
@@ -70,7 +73,6 @@ const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--color-border);
 }
 
 .sidebar-header {
@@ -97,30 +99,8 @@ const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
   flex: 1;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-size: var(--text-small);
-  color: var(--color-sidebar-text);
-}
-
-.nav-item:hover {
-  background: var(--color-sidebar-hover);
-}
-
-.nav-item.active {
-  background: var(--color-sidebar-active);
-  font-weight: 500;
-  color: var(--color-white);
 }
 
 .logout-item {
@@ -129,6 +109,6 @@ const profile: Ref<Profile> = useState('profile', () => ({}) as Profile)
 
 .logout-item:hover {
   background: var(--color-notice-red);
-  color: var(--color-white);
+  color: var(--color-sign-out-text-hover);
 }
 </style>

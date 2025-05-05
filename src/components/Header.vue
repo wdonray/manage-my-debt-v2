@@ -3,9 +3,7 @@
     <Flex align="baseline" style="padding: 0 var(--spacing-md)">
       <FlexSpace />
 
-      <AppearanceToggle v-if="!mobile" />
-
-      <template v-else>
+      <template v-if="mobile">
         <Sheet v-model="isDrawerOpen">
           <Flex stack>
             <NavItem to="/debts" icon="ph:notebook-bold" label="View All Debts" />

@@ -22,14 +22,14 @@ const active = computed(() => useRoute().path === props.to)
 
 <style>
 .light {
-  --color-nav-item-hover: var(--color-gray-600);
-  --color-nav-item-active: var(--color-blue-500);
+  --color-nav-item-hover: var(--color-gray-800);
+  --color-nav-item-active: var(--color-gray-700);
   --color-nav-item-text: var(--color-gray-100);
 }
 
 .dark {
   --color-nav-item-hover: var(--color-gray-700);
-  --color-nav-item-active: var(--color-blue-500);
+  --color-nav-item-active: var(--color-gray-600);
   --color-nav-item-text: var(--color-gray-50);
 }
 </style>
@@ -39,16 +39,16 @@ const active = computed(() => useRoute().path === props.to)
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-right: 0;
   border-radius: var(--radius-sm);
   text-decoration: none;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
+  font-size: var(--text-small);
   color: var(--color-nav-item-text);
 }
 
 .nav-item.active {
-  font-weight: 500;
   background-color: var(--color-nav-item-active);
 }
 

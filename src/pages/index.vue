@@ -1,5 +1,5 @@
 <template>
-  <Flex v-if="user && profileLoaded && debtsLoaded" stack class="container" gap="xl">
+  <Flex v-if="user && profileLoaded && debtsLoaded && debts" stack class="container" gap="xl">
     <section class="welcome-message">
       <h1 style="font-size: 32px">
         <template v-if="name && debts.length > 0">Welcome back, {{ name }}</template>
@@ -153,7 +153,7 @@
           </Flex>
         </DashboardCard>
 
-        <hr class="margin-0" >
+        <hr class="margin-0" />
 
         <Flex stack gap="md">
           <h2 class="margin-0">Other Debts</h2>
@@ -198,20 +198,22 @@
 <script setup lang="ts">
 const { profile, loaded: profileLoaded } = useProfile()
 const { user } = useAuth()
-const { debts, loaded: debtsLoaded } = useDebts()
 const { mobile } = useBreakpoint()
 
+const debts = inject(DEBTS_KEY)
+const debtsLoaded = inject(DEBTS_LOADED_KEY)
+
 const name = computed(() => profile.value?.username || profile.value?.full_name)
-const totalDebt = computed(() => calculateTotalDebt(debts.value))
-const totalMonthlyPayments = computed(() => calculateTotalMonthlyPayments(debts.value))
-const priorityDebt = computed(() => getPriorityDebt(debts.value))
+const totalDebt = computed(() => calculateTotalDebt(debts?.value ?? []))
+const totalMonthlyPayments = computed(() => calculateTotalMonthlyPayments(debts?.value ?? []))
+const priorityDebt = computed(() => getPriorityDebt(debts?.value ?? []))
 const monthlyPayment = computed(() =>
   priorityDebt.value ? priorityDebt.value?.min_payment + (priorityDebt.value?.extra_payment || 0) : 0
 )
 const estimatedPayoffMonths = computed(() => (priorityDebt.value ? calculatePayoffMonths(priorityDebt.value) : 0))
 const estimatedPayoffDate = computed(() => (priorityDebt.value ? calculatePayoffDate(priorityDebt.value) : ''))
 const paymentOnlyCoversInterest = computed(() => estimatedPayoffMonths.value === Infinity)
-const averageAPR = computed(() => calculateAverageAPR(debts.value))
+const averageAPR = computed(() => calculateAverageAPR(debts?.value ?? []))
 const payoffProgress = computed(() => (priorityDebt.value ? calculatePayoffProgress(priorityDebt.value) : 0))
 </script>
 

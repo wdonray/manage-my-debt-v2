@@ -11,9 +11,11 @@
     </Flex>
 
     <div v-auto-animate>
-      <Spinner v-if="loading && !debts.length" />
+      <Center v-if="loading && !debts?.length">
+        <Spinner size="128" />
+      </Center>
 
-      <Notice v-else-if="debts.length === 0" type="info">
+      <Notice v-else-if="debts?.length === 0" type="info">
         <p>Start your debt-free journey by adding your first debt.</p>
         <template #actions>
           <NuxtLink to="/debts/new">
@@ -136,10 +138,13 @@
 
 <script setup lang="ts">
 const statusFilter = ref('all')
-const { debts, loading, fetchDebts } = useDebts()
+const { fetchDebts } = useDebts({ disableFetch: true })
+
+const debts = inject(DEBTS_KEY)
+const loading = inject(DEBTS_LOADING_KEY)
 
 const sortedDebts = computed(() => {
-  return [...debts.value]
+  return [...(debts?.value ?? [])]
     .filter((debt) => {
       if (statusFilter.value === 'all') return true
       if (statusFilter.value === 'not_set') return debt.status === null

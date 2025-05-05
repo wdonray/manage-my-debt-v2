@@ -41,11 +41,12 @@
 import { useLocalStorage } from '@vueuse/core'
 import { motion } from 'motion-v'
 
-const props = defineProps<{
-  title?: string
-  icon?: string
-  reverse?: boolean
-}>()
+const props = defineProps({
+  title: { type: String, default: '' },
+  icon: { type: String, default: '' },
+  reverse: { type: Boolean, default: false },
+  localStorage: { type: Boolean, default: true },
+})
 
 const transition = {
   type: 'spring',
@@ -61,7 +62,7 @@ const animate = computed(() => {
   return { rotate: active.value ? 180 : 0 }
 })
 
-const active = useLocalStorage(`nav-group-${props.title}-active`, false)
+const active = props.localStorage ? useLocalStorage(`nav-group-${props.title}-active`, false) : ref(false)
 
 function toggleSection() {
   active.value = !active.value
@@ -79,6 +80,7 @@ function toggleSection() {
   all: unset;
   cursor: pointer;
   padding: var(--spacing-sm);
+  padding-right: 0;
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 500;
