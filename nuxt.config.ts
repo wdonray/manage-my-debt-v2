@@ -34,4 +34,14 @@ export default defineNuxtConfig({
       exclude: ['/one-time-code', '/create-account'],
     },
   },
+
+  turnstile: {
+    siteKey: '0x4AAAAAABE7Erd3V_T0mZM6',
+  },
+
+  runtimeConfig: {
+    turnstile: {
+      secretKey: '0x4AAAAAABE7EkOrJ7UPKOmUWO_FVA18FMo',
+    },
+  },
 })
