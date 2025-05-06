@@ -23,7 +23,7 @@
 
     <Flex stack gap="xl">
       <section class="key-metrics">
-        <Flex align="center">
+        <Grid columns="1fr 1fr" align="center">
           <Flex>
             <Flex stack gap="xs">
               <h3 style="margin: 0">Total Debt</h3>
@@ -31,32 +31,30 @@
             </Flex>
           </Flex>
 
-          <FlexSpace />
-
-          <Flex gap="3xl">
+          <div class="metric-values" :class="{ mobile }">
             <Flex stack gap="xs">
-              <small class="text-secondary">Active Debts</small>
+              <small class="text-secondary" style="white-space: nowrap">Active Debts</small>
               <h3>{{ debts.length }}</h3>
             </Flex>
 
             <Flex stack gap="xs">
-              <small class="text-secondary">Average Interest Rate</small>
+              <small class="text-secondary" style="white-space: nowrap">Average Interest Rate</small>
               <h3>{{ formatPercentage(averageAPR) }}</h3>
             </Flex>
 
             <Flex stack gap="xs">
-              <small class="text-secondary">Total Monthly Payment</small>
+              <small class="text-secondary" style="white-space: nowrap">Total Monthly Payment</small>
               <h3>{{ formatCurrency(totalMonthlyPayments) }}</h3>
             </Flex>
-          </Flex>
-        </Flex>
+          </div>
+        </Grid>
       </section>
 
       <section class="priority-debt">
         <Flex v-if="priorityDebt" stack gap="xl">
           <DashboardCard>
             <template #title>
-              <Flex gap="sm">
+              <Flex gap="sm" align="center">
                 <Icon name="ph:target-bold" size="24" style="color: var(--color-notice-red-text)" />
                 <Flex align="center" gap="sm">
                   <template v-if="!mobile">
@@ -65,16 +63,21 @@
                   </template>
                   <h3 class="margin-0">{{ priorityDebt.name || 'Unnamed Debt' }}</h3>
                 </Flex>
+                <Tooltip>
+                  <template #content>This is the debt that you should focus on paying off first.</template>
+                </Tooltip>
               </Flex>
             </template>
 
             <template #actions>
-              <NuxtLink :to="{ name: 'debts-edit-id', params: { id: priorityDebt?.id } }">
-                <Button class="btn-text">
-                  <Icon name="ph:sliders-bold" size="20" />
-                  Update Payment
-                </Button>
-              </NuxtLink>
+              <small>
+                <NuxtLink :to="{ name: 'debts-edit-id', params: { id: priorityDebt?.id } }">
+                  <Button class="btn-text">
+                    <Icon name="ph:sliders-bold" size="20" />
+                    Update Payment
+                  </Button>
+                </NuxtLink>
+              </small>
             </template>
 
             <Flex stack gap="xl">
@@ -224,6 +227,17 @@ const payoffProgress = computed(() => (priorityDebt.value ? calculatePayoffProgr
 </script>
 
 <style scoped>
+.metric-values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-3xl);
+}
+
+.metric-values.mobile {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
 .metric-value {
   font-size: calc(var(--text-h1) * 1.25);
 }
