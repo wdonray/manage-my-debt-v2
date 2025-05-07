@@ -1,5 +1,5 @@
 <template>
-  <Grid v-if="render" columns="1.618fr 1fr" gap="xl" style="position: relative">
+  <Grid v-if="render" columns="554px 343px" style="position: relative">
     <FormWithValidation @submit="submit">
       <Card border class="form-card">
         <Flex v-auto-animate stack>
@@ -25,25 +25,26 @@
               v-model="formData.balance"
               label="Current Balance *"
               name="balance"
-              validations="required|min_value:1"
+              :validations="balanceValidation"
               description="The total amount you currently owe. This helps determine your debt payoff timeline"
             />
             <FieldCurrency
               v-model="formData.starting_balance"
               label="Starting Balance"
               name="starting_balance"
-              :validations="editing ? 'required|min_value:1' : 'min_value:1'"
+              :validations="startingBalanceValidation"
+              :optional="!editing"
               :description="
                 editing
                   ? 'The initial balance when you started tracking this debt (required when editing)'
-                  : 'The initial balance when you started tracking this debt. Will default to current balance if not set'
+                  : 'The initial balance when you started tracking this debt. If left empty, it will default to the current balance'
               "
             />
             <FieldPercentage
               v-model="formData.apr"
               label="Interest Rate (APR) *"
               name="apr"
-              validations="required|min_value:0"
+              :validations="aprValidation"
               description="Annual Percentage Rate - The avalanche method targets high-interest debts first to minimize interest costs"
             />
           </section>
@@ -61,7 +62,7 @@
               v-model="formData.min_payment"
               label="Required Monthly Payment *"
               name="min_payment"
-              validations="required|min_value:1"
+              :validations="minPaymentValidation"
               description="The minimum amount due each month. The avalanche method requires keeping all minimum payments current"
             />
             <FieldCurrency
@@ -69,7 +70,7 @@
               label="Extra Monthly Payment"
               name="extra_payment"
               optional
-              validations="min_value:0"
+              :validations="extraPaymentValidation"
               description="Additional amount you can put toward this debt. The avalanche method will direct extra payments to your highest-interest debt"
             />
             <FieldText
@@ -274,6 +275,50 @@ const steps = {
 }
 
 const { currentStep, nextStep, previousStep } = useSteps(steps)
+
+function minPaymentValidation(value: number) {
+  if (!value) return 'Minimum payment is required'
+  if (value < 0) return 'Minimum payment cannot be negative'
+  if (value === 0) return 'Minimum payment cannot be zero'
+  const balance = formData.value?.balance || 0
+  if (value === balance) return 'Minimum payment cannot be equal to the balance'
+  if (value >= balance) return 'Minimum payment cannot be greater than the balance'
+  return true
+}
+
+function balanceValidation(value: number) {
+  if (!value) return 'Balance is required'
+  if (value < 0) return 'Balance cannot be negative'
+  if (value === 0) return 'Balance cannot be zero'
+  return true
+}
+
+function startingBalanceValidation(value: number) {
+  if (!value) {
+    if (editing) return 'Starting balance is required when editing a debt'
+    return true // Allow empty for new debts, will default to current balance
+  }
+  if (value < 0) return 'Starting balance cannot be negative'
+  if (value === 0) return 'Starting balance cannot be zero'
+  const currentBalance = formData.value?.balance || 0
+  if (value < currentBalance) return 'Starting balance cannot be less than current balance'
+  return true
+}
+
+function aprValidation(value: number) {
+  if (!value) return 'Interest rate is required'
+  if (value < 0) return 'Interest rate cannot be negative'
+  if (value > 100) return 'Interest rate cannot exceed 100%'
+  return true
+}
+
+function extraPaymentValidation(value: number) {
+  if (!value) return true // Optional field
+  if (value < 0) return 'Extra payment cannot be negative'
+  const minPayment = formData.value?.min_payment || 0
+  if (value < minPayment) return 'Extra payment should be at least equal to minimum payment'
+  return true
+}
 
 const router = useRouter()
 const fetchDebts = inject(FETCH_DEBTS_KEY)

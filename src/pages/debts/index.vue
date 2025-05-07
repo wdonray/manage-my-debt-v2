@@ -106,7 +106,7 @@
                 <div>
                   <h4 class="text-secondary margin-0">Balance & Interest</h4>
                   <dl>
-                    <dt>Initial Balance</dt>
+                    <dt>Starting Balance</dt>
                     <dd>{{ row.starting_balance ? formatCurrency(row.starting_balance) : 'Not Set' }}</dd>
                   </dl>
                   <dl>
