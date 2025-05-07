@@ -38,6 +38,7 @@ export default defineEventHandler(async (event) => {
       balance: body.balance,
       apr: body.apr,
       min_payment: body.min_payment,
+      starting_balance: body.starting_balance || null,
       extra_payment: body.extra_payment || 0,
       due_date: body.due_date || null,
       priority_order: body.priority_order || null,

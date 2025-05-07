@@ -147,7 +147,7 @@
             Debt Summary
           </h3>
 
-          <hr class="preview-divider" >
+          <hr class="preview-divider" />
 
           <Flex v-auto-animate stack gap="xl">
             <Flex v-if="formData.name" class="preview-item">
@@ -276,6 +276,7 @@ const steps = {
 const { currentStep, nextStep, previousStep } = useSteps(steps)
 
 const router = useRouter()
+const fetchDebts = inject(FETCH_DEBTS_KEY)
 
 async function submit() {
   if (loading.value) return
@@ -289,6 +290,7 @@ async function submit() {
       await addDebt(formData.value as DebtCreatePayload)
     }
     setUnsaved(false)
+    fetchDebts?.()
     router.back()
     return
   }
