@@ -252,13 +252,17 @@ const formData = ref<DebtCreatePayload | DebtUpdatePayload>({
   priority_order: 0,
 })
 
-const statusOptions = [
+const statusOptions = computed(() => [
   { key: 'current', display: 'Current' },
   { key: 'behind', display: 'Behind' },
-  { key: 'paid_off', display: 'Paid Off' },
+  {
+    key: 'paid_off',
+    display: formData.value.balance !== 0 ? 'Paid Off (You still owe money)' : 'Paid Off',
+    disabled: formData.value.balance !== 0,
+  },
   { key: 'paused', display: 'Paused' },
   { key: 'closed', display: 'Closed' },
-]
+])
 
 const { mobile } = useBreakpoint()
 const { addDebt, updateDebt, debt, loading, saving } = useDebt(props.id, { disableFetch: !editing })
