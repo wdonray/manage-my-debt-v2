@@ -3,7 +3,7 @@
     <FormWithValidation @submit="submit">
       <Card border class="form-card">
         <Flex v-auto-animate stack>
-          <section v-if="currentStep === steps.BASIC_INFO" v-auto-animate class="form-section">
+          <section v-if="currentStep === steps.BASIC_INFO" v-auto-animate class="form-section" :class="{ mobile }">
             <h3 class="section-title">
               <Flex align="center" gap="sm" style="width: 100%">
                 <Icon name="ph:info-bold" size="24" class="section-icon" />
@@ -49,7 +49,7 @@
             />
           </section>
 
-          <section v-else-if="currentStep === steps.PAYMENT_DETAILS" class="form-section">
+          <section v-else-if="currentStep === steps.PAYMENT_DETAILS" class="form-section" :class="{ mobile }">
             <h3 class="section-title">
               <Flex align="center" gap="sm" style="width: 100%">
                 <Icon name="ph:chart-line-up-bold" size="24" class="section-icon" />
@@ -91,7 +91,7 @@
             />
           </section>
 
-          <section v-else-if="currentStep === steps.ADDITIONAL_SETTINGS" class="form-section">
+          <section v-else-if="currentStep === steps.ADDITIONAL_SETTINGS" class="form-section" :class="{ mobile }">
             <h3 class="section-title">
               <Flex align="center" gap="sm" style="width: 100%">
                 <Icon name="ph:sliders-bold" size="24" class="section-icon" />
@@ -118,24 +118,26 @@
               description="Override the automatic highest-interest-first ordering. Note: Following the standard avalanche method maximizes your interest savings"
             />
           </section>
+        </Flex>
 
-          <Flex justify="space-between" class="form-actions">
-            <Button class="btn-outline" type="button" @click="cancel">
-              <Flex align="center" gap="sm">
-                <Icon v-if="currentStep === steps.BASIC_INFO" name="ph:x-bold" size="20" />
-                <Icon v-else name="ph:arrow-left-bold" size="20" />
-                {{ currentStep === steps.BASIC_INFO ? 'Cancel' : 'Previous' }}
-              </Flex>
-            </Button>
+        <hr />
 
-            <Button class="btn-primary" type="submit" :disabled="loading">
-              <Flex align="center" gap="sm">
-                {{ currentStep === steps.ADDITIONAL_SETTINGS ? 'Save Debt' : 'Continue' }}
-                <Icon v-if="currentStep !== steps.ADDITIONAL_SETTINGS" name="ph:arrow-right-bold" size="20" />
-                <Icon v-else name="ph:check-bold" size="20" />
-              </Flex>
-            </Button>
-          </Flex>
+        <Flex justify="space-between" class="form-actions" :class="{ mobile }" :stack="mobile">
+          <Button class="btn-outline" type="button" @click="cancel">
+            <Flex align="center" gap="sm">
+              <Icon v-if="currentStep === steps.BASIC_INFO" name="ph:x-bold" size="20" />
+              <Icon v-else name="ph:arrow-left-bold" size="20" />
+              {{ currentStep === steps.BASIC_INFO ? 'Cancel' : 'Previous' }}
+            </Flex>
+          </Button>
+
+          <Button class="btn-primary" type="submit" :disabled="loading">
+            <Flex align="center" gap="sm">
+              {{ currentStep === steps.ADDITIONAL_SETTINGS ? 'Save Debt' : 'Continue' }}
+              <Icon v-if="currentStep !== steps.ADDITIONAL_SETTINGS" name="ph:arrow-right-bold" size="20" />
+              <Icon v-else name="ph:check-bold" size="20" />
+            </Flex>
+          </Button>
         </Flex>
       </Card>
     </FormWithValidation>
@@ -258,6 +260,7 @@ const statusOptions = [
   { key: 'closed', display: 'Closed' },
 ]
 
+const { mobile } = useBreakpoint()
 const { addDebt, updateDebt, debt, loading, saving } = useDebt(props.id, { disableFetch: !editing })
 
 const { unsaved, showStatus, setUnsaved } = useForm(debt, formData)
@@ -372,11 +375,16 @@ function cancel() {
 <style scoped>
 .form-card {
   transition: all 0.3s ease;
+  padding-top: var(--spacing-lg);
 }
 
 .form-section {
   animation: fadeIn 0.3s ease;
-  padding: var(--spacing-xl);
+  padding-inline: var(--spacing-xl);
+}
+
+.form-section.mobile {
+  padding: var(--spacing-xs);
 }
 
 .section-title {
@@ -393,8 +401,11 @@ function cancel() {
 }
 
 .form-actions {
-  padding: var(--spacing-xl);
-  border-top: 1px solid var(--color-border);
+  padding-inline: var(--spacing-xl);
+}
+
+.form-actions.mobile {
+  padding-inline: var(--spacing-xs);
 }
 
 :deep(.preview-card.card.border) {
