@@ -167,7 +167,10 @@
             <h2 class="margin-0">Other Debts</h2>
             <DashboardCard v-for="debt in debts.filter((debt) => debt.id !== priorityDebt?.id)" :key="debt.id">
               <Grid columns="200px 1fr 1fr 1fr" align="center">
-                <h3 class="margin-0">{{ debt.name || 'Unnamed Debt' }}</h3>
+                <h3 class="margin-0">
+                  {{ debt.name || 'Unnamed Debt' }}
+                  <span v-if="!isUnique?.(debt.id)">({{ debtsNameCount?.[debt.id] || 0 }})</span>
+                </h3>
 
                 <Flex align="baseline" gap="sm">
                   <small class="text-secondary">Balance</small>
@@ -205,13 +208,15 @@
 </template>
 
 <script setup lang="ts">
+import type { Debt } from '~/types/database'
 const { profile, loaded: profileLoaded } = useProfile()
 const { user } = useAuth()
 const { mobile } = useBreakpoint()
 
-const debts = inject(DEBTS_KEY)
+const debts = useState<Debt[]>('debts', () => [])
 const debtsLoaded = inject(DEBTS_LOADED_KEY)
-
+const isUnique = inject(IS_UNIQUE_KEY)
+const debtsNameCount = inject(DEBTS_NAME_COUNT_KEY)
 const name = computed(() => profile.value?.username || profile.value?.full_name)
 const totalDebt = computed(() => calculateTotalDebt(debts?.value ?? []))
 const totalMonthlyPayments = computed(() => calculateTotalMonthlyPayments(debts?.value ?? []))

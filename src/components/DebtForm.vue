@@ -111,8 +111,9 @@
             <FieldText
               v-model="formData.priority_order"
               type="number"
-              label="Custom Priority Override"
+              label="Custom Priority Override (Coming Soon)"
               name="priority_order"
+              disabled
               optional
               validations="min_value:0"
               description="Override the automatic highest-interest-first ordering. Note: Following the standard avalanche method maximizes your interest savings"
@@ -249,7 +250,7 @@ const formData = ref<DebtCreatePayload | DebtUpdatePayload>({
   status: null,
   start_date: '',
   due_date: '',
-  priority_order: 0,
+  priority_order: undefined,
 })
 
 const statusOptions = computed(() => [

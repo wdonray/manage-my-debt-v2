@@ -18,6 +18,32 @@ export default function useDebts({ disableFetch = false }: UseDebtsOptions = {})
   const error = ref<Error | null>(null)
   const loaded = ref(false)
 
+  const debtsNameCount = computed(() => {
+    const nameCounts: Record<string, number> = {}
+
+    debts.value.forEach((debt) => {
+      const sameNameDebts = debts.value.filter((d) => getDebtName(d) === getDebtName(debt))
+      const index = sameNameDebts.findIndex((d) => d.id === debt.id)
+      nameCounts[debt.id] = index + 1
+    })
+
+    console.log(nameCounts)
+
+    return nameCounts
+  })
+
+  function getDebtName(debt: Debt): string {
+    return debt.name || 'Unnamed Debt'
+  }
+
+  function isUnique(id: string): boolean {
+    const debt = debts.value.find((d) => d.id === id)
+    if (!debt) return true
+
+    const sameNameDebts = debts.value.filter((d) => getDebtName(d) === getDebtName(debt))
+    return sameNameDebts.length === 1
+  }
+
   async function fetchDebts() {
     if (!user.value?.id) return
 
@@ -26,7 +52,8 @@ export default function useDebts({ disableFetch = false }: UseDebtsOptions = {})
 
     try {
       const data = await $fetch<Debt[]>(`/api/get/debts/user/${user.value.id}`)
-      debts.value = data
+      debts.value = [...data]
+      debts.value.sort((a, b) => b.apr - a.apr)
     } catch (err) {
       error.value = err instanceof Error ? err : new Error('Failed to fetch debts')
     } finally {
@@ -41,9 +68,11 @@ export default function useDebts({ disableFetch = false }: UseDebtsOptions = {})
 
   return {
     debts,
-    loading,
+    debtsNameCount,
     error,
-    loaded,
     fetchDebts,
+    isUnique,
+    loaded,
+    loading,
   }
 }

@@ -3,7 +3,10 @@ export const DEBTS_KEY = Symbol() as InjectionKey<Ref<Debt[]>>
 export const DEBTS_LOADING_KEY = Symbol() as InjectionKey<Ref<boolean>>
 export const DEBTS_LOADED_KEY = Symbol() as InjectionKey<Ref<boolean>>
 export const DEBTS_ERROR_KEY = Symbol() as InjectionKey<Ref<Error | null>>
+export const DEBTS_NAME_COUNT_KEY = Symbol() as InjectionKey<Ref<Record<string, number>>>
 export const FETCH_DEBTS_KEY = Symbol() as InjectionKey<() => Promise<void>>
+export const IS_UNIQUE_KEY = Symbol() as InjectionKey<(id: string) => boolean>
+
 export const MIN_PAYMENT_PERCENTAGE = 3 // 3%
 export const LARGE_BALANCE_AMOUNT = 10000 // $10,000
 export const HIGH_APR_PERCENTAGE = 20 // 20%

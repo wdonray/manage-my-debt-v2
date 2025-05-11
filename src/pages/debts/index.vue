@@ -60,12 +60,15 @@
             <template #name="{ row }">
               <Flex align="center" gap="sm">
                 <Icon
-                  v-if="getPriorityDebt(debts)?.id === row.id"
+                  v-if="getPriorityDebt(sortedDebts)?.id === row.id"
                   name="ph:target-bold"
                   size="24"
                   style="color: var(--color-notice-red-text)"
                 />
-                <strong>{{ row.name || 'Unnamed Debt' }}</strong>
+                <strong>
+                  {{ row.name || 'Unnamed Debt' }}
+                  <span v-if="!isUnique?.(row.id)">({{ debtsNameCount?.[row.id] || 0 }})</span>
+                </strong>
               </Flex>
             </template>
 
@@ -140,23 +143,22 @@
 </template>
 
 <script setup lang="ts">
+import type { Debt } from '~/types/database'
+
 const statusFilter = ref('all')
 const { fetchDebts } = useDebts({ disableFetch: true })
 
-const debts = inject(DEBTS_KEY)
+const debts = useState<Debt[]>('debts', () => [])
 const loading = inject(DEBTS_LOADING_KEY)
+const debtsNameCount = inject(DEBTS_NAME_COUNT_KEY)
+const isUnique = inject(IS_UNIQUE_KEY)
 
 const sortedDebts = computed(() => {
-  return [...(debts?.value ?? [])]
-    .filter((debt) => {
-      if (statusFilter.value === 'all') return true
-      if (statusFilter.value === 'not_set') return debt.status === null
-      return debt.status === statusFilter.value
-    })
-    .sort((a, b) => {
-      // Sort by APR in descending order (highest interest first)
-      return b.apr - a.apr
-    })
+  return [...(debts?.value ?? [])].filter((debt) => {
+    if (statusFilter.value === 'all') return true
+    if (statusFilter.value === 'not_set') return debt.status === null
+    return debt.status === statusFilter.value
+  })
 })
 
 interface Column {

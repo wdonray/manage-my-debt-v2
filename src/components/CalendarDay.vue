@@ -50,7 +50,7 @@ function isSelected(day: string | number) {
   )
 }
 
-const debts = inject(DEBTS_KEY)
+const debts = useState<Debt[]>('debts', () => [])
 
 function getDebtsForDay(day: string | number) {
   if (!debts?.value) return []

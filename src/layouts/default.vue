@@ -14,13 +14,14 @@
 const mounted = ref(false)
 const { mobile } = useBreakpoint()
 
-const { debts, loading, loaded, error, fetchDebts } = useDebts()
+const { loading, loaded, error, fetchDebts, debtsNameCount, isUnique } = useDebts()
 
-provide(DEBTS_KEY, debts)
 provide(DEBTS_LOADING_KEY, loading)
 provide(DEBTS_LOADED_KEY, loaded)
 provide(DEBTS_ERROR_KEY, error)
 provide(FETCH_DEBTS_KEY, fetchDebts)
+provide(DEBTS_NAME_COUNT_KEY, debtsNameCount)
+provide(IS_UNIQUE_KEY, isUnique)
 
 onMounted(() => {
   mounted.value = true
