@@ -24,6 +24,8 @@ export default defineNuxtModule({
       'FlexSpace',
       'FormWithValidation',
       'Grid',
+      'Menu',
+      'MenuOption',
       'Notice',
       'Sheet',
       'Skeleton',

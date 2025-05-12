@@ -84,12 +84,16 @@
             </template>
 
             <template #actions="{ row }">
-              <Flex>
-                <NuxtLink :to="{ name: 'debts-edit-id', params: { id: row.id } }">
-                  <Button class="btn-text">Edit</Button>
-                </NuxtLink>
-                <Button class="btn-text" style="color: var(--color-error)" @click="removeDebt(row.id)">Delete</Button>
-              </Flex>
+              <Menu>
+                <button type="button" class="btn-icon">
+                  <Icon name="ph:dots-three-bold" size="24" />
+                </button>
+
+                <template #options>
+                  <MenuOption @click="$router.push({ name: 'debts-edit-id', params: { id: row.id } })">Edit</MenuOption>
+                  <MenuOption danger @click="removeDebt(row.id)">Delete</MenuOption>
+                </template>
+              </Menu>
             </template>
 
             <template #dropdown="{ row }">
@@ -181,7 +185,7 @@ const columns: Column[] = [
   { key: 'apr', display: 'APR', type: 'percentage', sortable: true },
   { key: 'balance', display: 'Balance', type: 'currency', sortable: true },
   { key: 'status', display: 'Status', sortable: true },
-  { key: 'actions', display: '' },
+  { key: 'actions', display: '', class: 'actions' },
 ]
 
 const statusOptions = [
@@ -204,6 +208,7 @@ const statusMap = {
 }
 
 async function removeDebt(debtId: string) {
+  if (!confirm('Are you sure you want to remove this debt?')) return
   const { removeDebt } = useDebt(debtId, { disableFetch: true })
   await removeDebt()
   fetchDebts()
