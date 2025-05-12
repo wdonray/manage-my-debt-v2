@@ -201,7 +201,7 @@
             <Flex v-if="formData.due_date" class="preview-item">
               <strong>Payment Due</strong>
               <FlexSpace />
-              <span>{{ formatDate(formData.due_date) }}</span>
+              <span>{{ formatDate(calculateNextPaymentDate(formData.due_date).toISOString()) }}</span>
             </Flex>
 
             <Flex v-if="formData.status" class="preview-item">
@@ -308,8 +308,6 @@ function startingBalanceValidation(value: number) {
   }
   if (value < 0) return 'Starting balance cannot be negative'
   if (value === 0) return 'Starting balance cannot be zero'
-  const currentBalance = formData.value?.balance || 0
-  if (value < currentBalance) return 'Starting balance cannot be less than current balance'
   return true
 }
 
@@ -323,8 +321,6 @@ function aprValidation(value: number) {
 function extraPaymentValidation(value: number) {
   if (!value) return true // Optional field
   if (value < 0) return 'Extra payment cannot be negative'
-  const minPayment = formData.value?.min_payment || 0
-  if (value < minPayment) return 'Extra payment should be at least equal to minimum payment'
   return true
 }
 

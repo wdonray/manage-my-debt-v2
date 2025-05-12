@@ -140,7 +140,8 @@ export function sortDebtsByAPR(debts: Debt[]): Debt[] {
  * @returns The debt with the highest APR, or undefined if no debts
  */
 export function getPriorityDebt(debts: Debt[]): Debt | undefined {
-  return sortDebtsByAPR(debts)[0]
+  const ignoredStatuses = ['closed', 'paid_off', 'paused']
+  return sortDebtsByAPR(debts).find((debt) => !ignoredStatuses.includes(debt.status || ''))
 }
 
 /**
@@ -205,4 +206,37 @@ export function calculatePayoffProgress(debt: Debt): number {
   if (!debt.starting_balance || debt.starting_balance <= 0) return 0
   const amountPaid = debt.starting_balance - debt.balance
   return Math.min(100, Math.round((amountPaid / debt.starting_balance) * 100))
+}
+
+/**
+ * Calculate the next payment date based on the current due date Handles edge cases for months with different numbers of
+ * days Returns the original date if it hasn't passed yet
+ *
+ * @param dueDate The current due date as a string (YYYY-MM-DD format)
+ * @returns The next payment date as a Date object
+ */
+export function calculateNextPaymentDate(dueDate: string): Date {
+  const date = new Date(dueDate)
+  const today = new Date()
+
+  // If the due date hasn't passed yet, return it
+  if (date >= today) {
+    return date
+  }
+
+  const currentDay = date.getDate()
+
+  // Move to next month
+  date.setMonth(date.getMonth() + 1)
+
+  // Get the last day of the new month
+  const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
+
+  // If the original day is greater than the last day of the new month,
+  // set to the last day of the new month
+  if (currentDay > lastDayOfMonth) {
+    date.setDate(lastDayOfMonth)
+  }
+
+  return date
 }

@@ -5,7 +5,6 @@
         <template v-if="name && debts.length > 0">Welcome back, {{ name }}</template>
         <template v-else>
           <Flex align="center" gap="sm" wrap>
-            <Icon v-if="!mobile" name="ph:hand-waving" size="32" />
             <span>Welcome to Manage My Debt!</span>
           </Flex>
         </template>

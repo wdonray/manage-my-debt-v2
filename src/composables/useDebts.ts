@@ -27,8 +27,6 @@ export default function useDebts({ disableFetch = false }: UseDebtsOptions = {})
       nameCounts[debt.id] = index + 1
     })
 
-    console.log(nameCounts)
-
     return nameCounts
   })
 
@@ -52,8 +50,7 @@ export default function useDebts({ disableFetch = false }: UseDebtsOptions = {})
 
     try {
       const data = await $fetch<Debt[]>(`/api/get/debts/user/${user.value.id}`)
-      debts.value = [...data]
-      debts.value.sort((a, b) => b.apr - a.apr)
+      debts.value = sortDebtsByAPR(data)
     } catch (err) {
       error.value = err instanceof Error ? err : new Error('Failed to fetch debts')
     } finally {

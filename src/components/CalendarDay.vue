@@ -60,7 +60,7 @@ function getDebtsForDay(day: string | number) {
 
   return debts.value.filter((debt: Debt) => {
     if (!debt.due_date) return false
-    const dueDate = new Date(debt.due_date)
+    const dueDate = calculateNextPaymentDate(debt.due_date)
     return (
       dueDate.getDate() === currentMonthDate.getDate() &&
       dueDate.getMonth() === currentMonthDate.getMonth() &&

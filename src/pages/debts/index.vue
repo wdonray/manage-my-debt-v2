@@ -5,7 +5,7 @@
 
       <template #tools>
         <NuxtLink to="/debts/new">
-          <Button class="btn-primary btn-outline btn-small">
+          <Button class="btn-primary btn-small">
             <Icon name="ph:plus-bold" size="16" />
             Add debt
           </Button>
@@ -72,9 +72,13 @@
               </Flex>
             </template>
 
+            <template #due_date="{ row }">
+              {{ row.due_date ? formatDate(calculateNextPaymentDate(row.due_date).toISOString()) : 'Not Set' }}
+            </template>
+
             <template #status="{ row }">
               <strong v-if="row.status" class="status" :class="`status-${row.status}`">
-                {{ formatCapitalize(row.status) }}
+                {{ statusMap[row.status as keyof typeof statusMap] || 'Not Set' }}
               </strong>
               <strong v-else class="status status-null">Not set</strong>
             </template>
@@ -130,7 +134,9 @@
                   </dl>
                   <dl>
                     <dt>Next Due</dt>
-                    <dd>{{ row.due_date ? formatDate(row.due_date) : 'Not Set' }}</dd>
+                    <dd>
+                      {{ row.due_date ? formatDate(calculateNextPaymentDate(row.due_date).toISOString()) : 'Not Set' }}
+                    </dd>
                   </dl>
                 </div>
               </Grid>
@@ -187,6 +193,15 @@ const statusOptions = [
   { display: 'Paused', key: 'paused' },
   { display: 'Closed', key: 'closed' },
 ]
+
+const statusMap = {
+  current: 'Active',
+  behind: 'Behind',
+  not_set: 'Not Set',
+  paid_off: 'Paid Off',
+  paused: 'Paused',
+  closed: 'Closed',
+}
 
 async function removeDebt(debtId: string) {
   const { removeDebt } = useDebt(debtId, { disableFetch: true })
