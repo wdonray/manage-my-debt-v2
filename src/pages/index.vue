@@ -236,6 +236,16 @@ const estimatedPayoffDate = computed(() => (priorityDebt.value ? calculatePayoff
 const paymentOnlyCoversInterest = computed(() => estimatedPayoffMonths.value === Infinity)
 const averageAPR = computed(() => calculateAverageAPR(debts?.value ?? []))
 const payoffProgress = computed(() => (priorityDebt.value ? calculatePayoffProgress(priorityDebt.value) : 0))
+
+useSeoMeta({
+  title: 'Manage My Debt | Debt Avalanche Calculator & Tracker',
+  description:
+    'Pay off debt faster and save on interest with our free avalanche method calculator. Track balances, payments, and progress—all in one place.',
+  ogTitle: 'Manage My Debt – Avalanche Method Debt Tracker',
+  ogDescription:
+    'Use our free tool to organize, prioritize, and pay off your debts efficiently. Start your journey to financial freedom today.',
+  twitterCard: 'summary_large_image',
+})
 </script>
 
 <style scoped>

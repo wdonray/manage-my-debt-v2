@@ -155,6 +155,15 @@
 <script setup lang="ts">
 import type { Debt } from '~/types/database'
 
+useSeoMeta({
+  title: 'Debt List & Payoff Progress | Manage My Debt',
+  description:
+    'See all your debts, track payments, and monitor your payoff progress. Use the avalanche method to reduce interest and become debt-free sooner.',
+  ogTitle: 'Debt Management Dashboard | Manage My Debt',
+  ogDescription: 'Organize your debts, track balances, and accelerate your payoff with our debt avalanche tool.',
+  twitterCard: 'summary_large_image',
+})
+
 const statusFilter = ref('all')
 const { fetchDebts } = useDebts({ disableFetch: true })
 
