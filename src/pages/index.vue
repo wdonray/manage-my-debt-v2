@@ -83,7 +83,7 @@
               <ProgressBar
                 v-if="priorityDebt.starting_balance"
                 :progress="payoffProgress"
-                variant="success"
+                :variant="payoffProgress > 0 ? 'success' : 'error'"
                 :aria-label="`${payoffProgress}% of debt paid off`"
               >
                 <template #label>
@@ -125,7 +125,15 @@
                 </Flex>
               </Grid>
 
-              <template v-if="priorityDebt">
+              <Flex v-if="priorityDebt" stack gap="md">
+                <Notice v-if="payoffProgress < 0" type="error" align="flex-start">
+                  <strong>Warning: Your balance has increased since you started.</strong>
+                  <div>
+                    You now owe more than your original starting balance. Try to avoid new charges or increase your
+                    payments to reverse this trend.
+                  </div>
+                </Notice>
+
                 <Notice v-if="paymentOnlyCoversInterest" type="error" align="flex-start">
                   <Flex gap="sm" stack>
                     <strong>Payment Only Covers Interest</strong>
@@ -156,7 +164,7 @@
                     </small>
                   </Flex>
                 </Notice>
-              </template>
+              </Flex>
             </Flex>
           </DashboardCard>
 
@@ -164,7 +172,7 @@
 
           <Flex stack gap="md">
             <h2 class="margin-0">Other Debts</h2>
-            <DashboardCard v-for="debt in debts.filter((debt) => debt.id !== priorityDebt?.id)" :key="debt.id">
+            <DashboardCard v-for="debt in debts.filter((debt: Debt) => debt.id !== priorityDebt?.id)" :key="debt.id">
               <Grid columns="200px 1fr 1fr 1fr" align="center">
                 <h3 class="margin-0">
                   {{ debt.name || 'Unnamed Debt' }}
