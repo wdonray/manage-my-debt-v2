@@ -14,9 +14,9 @@
     </PageHeader>
 
     <div v-auto-animate>
-      <Center v-if="loading && !debts?.length">
-        <Spinner size="128" />
-      </Center>
+      <div v-if="loading && !debts?.length" class="spinner-container">
+        <Spinner />
+      </div>
 
       <Notice v-else-if="debts?.length === 0" type="info">
         <p>Start your debt-free journey by adding your first debt.</p>
@@ -280,5 +280,12 @@ dd {
 
 .status-null {
   color: var(--color-notice-gray-text);
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 400px);
 }
 </style>
